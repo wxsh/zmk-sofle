@@ -6,7 +6,7 @@ type: board
 arch: arm
 features:
   - keys
-  # - display
+  - display
 outputs:
   - usb
   - ble
