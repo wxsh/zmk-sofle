@@ -88,7 +88,7 @@
             >;
 
             sensor-bindings = <&scroll_encoder>;
-            display-name = "BLUETOOTH"
+            display-name = "BLUETOOTH";
         };
 
         layer_3 {
