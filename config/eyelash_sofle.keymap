@@ -111,7 +111,7 @@
 &kp TAB         &kp Q           &kp W         &kp E         &kp R             &kp T            &kp DOWN_ARROW          &kp Y      &kp U               &kp I      &kp O            &kp P            &kp NBME_A_RING
 &kp LCTRL       &kp A           &kp S         &kp D         &kp F             &kp G            &kp LEFT_ARROW          &kp H      &kp J               &kp K      &kp L            &kp NBME_O_SLASH &kp NBME_AE
 &kp LSHFT       &kp Z           &kp X         &kp C         &kp V             &kp B            &kp RIGHT_ARROW         &kp N      &kp M               &kp COMMA  &kp DOT          &kp NBME_MINUS   &kp NBME_APOS
-&kp C_MUTE      &kp LEFT_GUI    &kp LEFT_ALT  &kp LEFT_GUI  &my_mt 5 DELETE   &kp ENTER        &kp ENTER               &kp SPACE  &my_mt 6 BACKSPACE  &kp DELETE &kp RIGHT_ALT    &kp RIGHT_GUI
+&kp C_MUTE      &kp LEFT_GUI    &kp LEFT_ALT  &kp LEFT_GUI  &my_mt 4 DELETE   &kp ENTER        &kp ENTER               &kp SPACE  &my_mt 5 BACKSPACE  &kp DELETE &kp RIGHT_ALT    &kp RIGHT_GUI
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOL_DN>;
