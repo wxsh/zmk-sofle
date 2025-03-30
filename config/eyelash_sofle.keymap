@@ -12,6 +12,7 @@
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/behaviors.h>
 #include "keys_nb.h"
+#include "keys_nb_mac_extended.h"
 
 &mmv_input_listener { input-processors = <&zip_xy_scaler 2 1>; };
 
@@ -43,7 +44,11 @@
         compatible = "zmk,conditional-layers";
         tri_layer {
             if-layers = <1 2>;
-            then-layer = <3>;
+            then-layer = <6>;
+        };
+        tri_layer {
+            if-layers = <4 5>;
+            then-layer = <6>;
         };
     };
 
@@ -63,7 +68,7 @@
 
         layer0 {
             bindings = <
-&kp ESC         &kp N1          &kp N2        &kp N3        &kp N4            &kp N5           &kp UP_ARROW            &kp N6     &kp N7              &kp N8     &kp N9           &kp N0         &kp PLUS
+&kp ESC         &kp N1          &kp N2        &kp N3        &kp N4            &kp N5           &kp UP_ARROW            &kp N6     &kp N7              &kp N8     &kp N9           &kp N0         &kp NB_PLUS
 &kp TAB         &kp Q           &kp W         &kp E         &kp R             &kp T            &kp DOWN_ARROW          &kp Y      &kp U               &kp I      &kp O            &kp P          &kp NB_A_RING
 &kp LEFT_GUI    &kp A           &kp S         &kp D         &kp F             &kp G            &kp LEFT_ARROW          &kp H      &kp J               &kp K      &kp L            &kp NB_O_SLASH &kp NB_AE
 &kp LSHFT       &kp Z           &kp X         &kp C         &kp V             &kp B            &kp RIGHT_ARROW         &kp N      &kp M               &kp COMMA  &kp DOT          &kp NB_MINUS   &kp NB_APOS
@@ -76,11 +81,11 @@
 
         layer_1 {
             bindings = <
-&kp NB_ACUTE  &kp F1       &kp F2       &kp F3          &kp F4         &kp F5            &trans             &kp F6       &kp F7        &kp F8        &kp F9       &kp F10      &kp F11
-&none         &kp N1       &kp N2       &kp N3          &kp N4         &kp N5            &trans             &kp N6       &kp N7        &kp N8        &kp N9       &kp N0       &kp NB_TILDE
-&none         &kp NB_EXCL  &kp NB_AT    &kp NB_HASH     &kp NB_LT      &kp NB_GT         &trans             &kp NB_LPAR  &kp NB_RPAR   &kp NB_ASTRK  &kp NB_CARET &kp NB_PIPE  &kp NB_APOS
-&none         &kp NB_EQUAL &kp NB_MINUS &kp NB_PLUS     &kp NB_LBRC    &kp NB_RBRC       &trans             &kp NB_LBKT  &kp NB_RBKT   &kp NB_SEMI   &kp NB_COLON &kp NB_EQUAL &none
-&trans        &trans       &trans       &trans          &trans         &trans            &trans             &trans       &trans        &trans        &trans       &trans
+&kp NB_ACUTE  &kp F1       &kp F2       &kp F3          &kp F4         &kp F5            &mmv MOVE_UP             &kp F6       &kp F7        &kp F8        &kp F9       &kp F10      &kp F11
+&none         &kp N1       &kp N2       &kp N3          &kp N4         &kp N5            &mmv MOVE_DOWN           &kp N6       &kp N7        &kp N8        &kp N9       &kp N0       &kp NB_TILDE
+&none         &kp NB_EXCL  &kp NB_AT    &kp NB_HASH     &kp NB_LT      &kp NB_GT         &mmv MOVE_LEFT           &kp NB_LPAR  &kp NB_RPAR   &kp NB_ASTRK  &kp NB_CARET &kp NB_PIPE  &kp NB_APOS
+&none         &kp NB_EQUAL &kp NB_MINUS &kp NB_PLUS     &kp NB_LBRC    &kp NB_RBRC       &mmv MOVE_RIGHT          &kp NB_LBKT  &kp NB_RBKT   &kp NB_SEMI   &kp NB_COLON &kp NB_EQUAL &none
+&trans        &trans       &trans       &trans          &trans         &trans            &mkp LCLK                &trans       &trans        &trans        &trans       &trans
             >;
 
             display-name = "SYMBOL";
@@ -89,39 +94,67 @@
 
         layer_2 {
             bindings = <
-&kp GRAVE   &kp F1           &kp F2          &kp F3           &kp F4           &kp F5             &mmv MOVE_UP     &kp F6           &kp F7           &kp F8      &kp F9     &kp F10           &trans
-&trans      &kp GRAVE        &mkp LCLK       &mkp MCLK        &mkp RCLK        &mkp MB4           &mmv MOVE_DOWN   &kp PG_UP        &kp END          &kp UP      &kp HOME   &kp MINUS         &kp EQUAL
-&trans      &kp TILDE        &trans          &trans           &trans           &mkp MB5           &mmv MOVE_LEFT   &kp PG_DN        &kp LEFT         &kp DOWN    &kp RIGHT  &kp LEFT_BRACKET  &kp RIGHT_BRACKET
-&trans      &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &rgb_ug RGB_EFF  &rgb_ug RGB_EFR  &rgb_ug RGB_SPI    &mmv MOVE_RIGHT  &rgb_ug RGB_BRI  &rgb_ug RGB_BRD  &kp INSERT  &kp F11    &kp F12           &trans
-&kp C_MUTE  &trans           &trans          &trans           &trans           &trans             &mkp LCLK        &trans           &trans           &trans      &trans     &trans
+&kp GRAVE   &kp F1         &kp F2          &kp F3           &kp F4           &kp F5             &trans        &kp F6       &kp F7         &kp F8      &kp F9          &kp F10           &trans
+&trans      &kp INSERT     &kp PSCRN       &kp K_MENU       &trans           &trans             &trans        &kp PG_UP    &kp LC(LEFT)   &kp UP      &kp LC(RIGHT)   &kp LC(BACKSPACE) &kp BACKSPACE
+&trans      &kp LALT       &LCTRL          &LSHFT           &trans           &kp CAPS           &trans        &kp PG_DN    &kp LEFT       &kp DOWN    &kp RIGHT       &kp DELETE        &kp BACKSPACE
+&trans      &kp K_UNDO     &kp K_CUT       &kp K_COPY       &kp K_PASTE      &trans             &trans        &none        &kp HOME       &none       &kp END         &none             &trans
+&kp C_MUTE  &trans         &trans          &trans           &trans           &trans             &trans        &trans       &trans         &trans      &trans          &trans
             >;
 
-            display-name = "ADJUST";
+            display-name = "NAV";
             sensor-bindings = <&scroll_encoder>;
         };
 
         layer_3 {
+              bindings = <
+&kp ESC         &kp N1          &kp N2        &kp N3        &kp N4            &kp N5           &kp UP_ARROW            &kp N6     &kp N7              &kp N8     &kp N9           &kp N0           &kp NBME_PLUS
+&kp TAB         &kp Q           &kp W         &kp E         &kp R             &kp T            &kp DOWN_ARROW          &kp Y      &kp U               &kp I      &kp O            &kp P            &kp NBME_A_RING
+&kp LCTRL       &kp A           &kp S         &kp D         &kp F             &kp G            &kp LEFT_ARROW          &kp H      &kp J               &kp K      &kp L            &kp NBME_O_SLASH &kp NBME_AE
+&kp LSHFT       &kp Z           &kp X         &kp C         &kp V             &kp B            &kp RIGHT_ARROW         &kp N      &kp M               &kp COMMA  &kp DOT          &kp NBME_MINUS   &kp NBME_APOS
+&kp C_MUTE      &kp LEFT_GUI    &kp LEFT_ALT  &kp LEFT_GUI  &my_mt 5 DELETE   &kp ENTER        &kp ENTER               &kp SPACE  &my_mt 6 BACKSPACE  &kp DELETE &kp RIGHT_ALT    &kp RIGHT_GUI
+            >;
+
+            sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOL_DN>;
+            display-name = "MAC";
+        };
+
+        layer_4 {
+            bindings = <
+&kp NBME_ACUTE  &kp F1          &kp F2          &kp F3              &kp F4          &kp F5            &mmv MOVE_UP             &kp F6           &kp F7          &kp F8          &kp F9          &kp F10         &kp F11
+&none           &kp N1          &kp N2          &kp N3              &kp N4          &kp N5            &mmv MOVE_DOWN           &kp N6           &kp N7          &kp N8          &kp N9          &kp N0          &kp NBME_COMBINING_TILDE
+&none           &kp NBME_EXCL   &kp NBME_AT     &kp NBME_HASH       &kp NBME_LT     &kp NBME_GT       &mmv MOVE_LEFT           &kp NBME_LPAR    &kp NBME_RPAR   &kp NBME_ASTRK  &kp NBME_CARET  &kp NBME_PIPE   &kp NBME_APOS
+&none           &kp NBME_EQUAL  &kp NBME_MINUS  &kp NBME_PLUS       &kp NBME_LBRC   &kp NBME_RBRC     &mmv MOVE_RIGHT          &kp NBME_LBKT    &kp NBME_RBKT   &kp NBME_SEMI   &kp NBME_COLON  &kp NBME_EQUAL  &none
+&trans          &trans          &trans          &trans              &trans          &trans            &mkp LCLK                &trans           &trans          &trans          &trans          &trans
+            >;
+
+            display-name = "SYMBOL";
+            sensor-bindings = <&scroll_encoder>;
+        };
+
+        layer_5 {
+            bindings = <
+&kp GRAVE   &kp F1         &kp F2          &kp F3           &kp F4           &kp F5             &trans        &kp F6       &kp F7         &kp F8      &kp F9          &kp F10             &trans
+&trans      &kp INSERT     &kp PSCRN       &kp K_MENU       &trans           &trans             &trans        &kp PG_UP    &kp LA(LEFT)   &kp UP      &kp LA(RIGHT)   &kp LC(BACKSPACE)   &kp BACKSPACE
+&trans      &kp LALT       &LCTRL          &LSHFT           &trans           &kp CAPS           &trans        &kp PG_DN    &kp LEFT       &kp DOWN    &kp RIGHT       &kp DELETE          &kp BACKSPACE
+&trans      &kp K_UNDO     &kp K_CUT       &kp K_COPY       &kp K_PASTE      &trans             &trans        &none        &kp LG(LEFT)   &none       &kp LG(RIGHT)   &none               &trans
+&kp C_MUTE  &trans         &trans          &trans           &trans           &trans             &trans        &trans       &trans         &trans      &trans          &trans
+            >;
+
+            display-name = "NAV";
+            sensor-bindings = <&scroll_encoder>;
+        };
+
+        layer_6 {
             bindings = <
 &kp TILDE  &bt BT_SEL 0  &bt BT_SEL 1    &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4    &mmv MOVE_UP     &kp F6  &kp F7  &kp F8      &kp F9     &kp F10      &trans
 &trans     &bt BT_CLR    &bt BT_CLR_ALL  &trans        &trans        &trans          &mmv MOVE_DOWN   &trans  &trans  &kp F11     &kp F12    &kp UNDER    &kp PLUS
-&trans     &out OUT_USB  &out OUT_BLE    &trans        &trans        &trans          &mmv MOVE_LEFT   &trans  &trans  &trans      &trans     &kp LBRC     &kp RBRC
+&trans     &out OUT_USB  &to 3           &out OUT_BLE  &trans        &trans          &mmv MOVE_LEFT   &trans  &trans  &trans      &trans     &kp LBRC     &kp RBRC
 &trans     &sys_reset    &trans          &bootloader   &trans        &trans          &mmv MOVE_RIGHT  &trans  &trans  &sys_reset  &soft_off  &bootloader  &trans
 &trans     &trans        &trans          &trans        &trans        &trans          &mkp LCLK        &trans  &trans  &trans      &trans     &trans
             >;
 
             sensor-bindings = <&scroll_encoder>;
-            display-name = "BLUETOOTH";
-        };
-
-        layer_4 {
-            bindings = <
-&trans  &trans  &trans  &trans  &trans          &trans          &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans          &trans          &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans          &trans          &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans          &trans          &trans  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans          &trans          &trans  &trans  &trans  &trans  &trans  &trans
-            >;
-            display-name = "SYMBOL";
+            display-name = "ADJUST";
         };
     };
 };
