@@ -6,6 +6,8 @@ manifest:
       # See:
       # - https://zmk.dev/docs/features/modules
       # - https://docs.zephyrproject.org/3.5.0/develop/west/manifest.html#projects
+    - name: carrefinho                            # Prospector dongle
+      url-base: https://github.com/carrefinho     # Prospector dongle
   projects:
     - name: eyelash_sofle
       url: https://github.com/wxsh/zmk-sofle
@@ -14,5 +16,8 @@ manifest:
       remote: zmkfirmware
       revision: main
       import: app/west.yml
+    - name: prospector-zmk-module                 # Prospector dongle
+      remote: carrefinho                          # Prospector dongle
+      revision: main                              # Prospector dongle
   self:
     path: config
