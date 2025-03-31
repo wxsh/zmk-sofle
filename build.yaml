@@ -2,6 +2,7 @@
 include:
   - board: seeeduino_xiao_ble
     shield: eyelash_sofle_dongle prospector_adapter
+    snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_BACKLIGHT=n -DCONFIG_ZMK_RGB_UNDERGLOW=n -DCONFIG_ZMK_STUDIO=y -DCONFIG_ZMK_STUDIO_LOCKING=n
   - board: eyelash_sofle_left
     #shield: nice_view
