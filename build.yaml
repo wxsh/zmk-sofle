@@ -2,6 +2,7 @@
 include:
   - board: seeeduino_xiao_ble
     shield: eyelash_sofle_dongle prospector_adapter
+    cmake-args: -DCONFIG_ZMK_BACKLIGHT=n
   - board: eyelash_sofle_left
     shield: nice_view
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
