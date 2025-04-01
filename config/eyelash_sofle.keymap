@@ -127,7 +127,7 @@
 &trans          &trans          &trans          &trans              &trans          &trans            &mkp LCLK                &trans           &trans          &trans          &trans                       &trans
             >;
 
-            display-name = "SYMBOL";
+            display-name = "SYMBOLMAC";
             sensor-bindings = <&scroll_encoder>;
         };
 
@@ -140,7 +140,7 @@
 &kp C_MUTE  &trans         &trans          &trans           &trans           &trans             &trans        &trans       &trans         &trans      &trans          &trans
             >;
 
-            display-name = "NAV";
+            display-name = "NAVMAC";
             sensor-bindings = <&scroll_encoder>;
         };
 
