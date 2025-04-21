@@ -11,7 +11,7 @@ manifest:
   projects:
     - name: eyelash_sofle
       url: https://github.com/wxsh/zmk-sofle
-      revision: main
+      revision: Dongle
     - name: zmk
       remote: zmkfirmware
       revision: main
