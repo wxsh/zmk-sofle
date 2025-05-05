@@ -82,9 +82,9 @@
         layer_1 {
             bindings = <
 &kp NB_ACUTE  &kp F1       &kp F2       &kp F3          &kp F4         &kp F5            &mmv MOVE_UP             &kp F6       &kp F7        &kp F8        &kp F9       &kp F10      &kp F11
-&none         &kp N1       &kp N2       &kp N3          &kp N4         &kp N5            &mmv MOVE_DOWN           &kp N6       &kp N7        &kp N8        &kp N9       &kp N0       &kp NB_TILDE
+&none         &kp N1       &kp N2       &kp N3          &kp N4         &kp N5            &mmv MOVE_DOWN           &kp NB_TILDE &kp N7        &kp N8        &kp N9       &kp N0       &kp NB_TILDE
 &none         &kp NB_EXCL  &kp NB_AT    &kp NB_HASH     &kp NB_LT      &kp NB_GT         &mmv MOVE_LEFT           &kp NB_LPAR  &kp NB_RPAR   &kp NB_ASTRK  &kp NB_CARET &kp NB_PIPE  &kp NB_APOS
-&none         &kp NB_EQUAL &kp NB_MINUS &kp NB_PLUS     &kp NB_LBRC    &kp NB_RBRC       &mmv MOVE_RIGHT          &kp NB_LBKT  &kp NB_RBKT   &kp NB_SEMI   &kp NB_COLON &kp NB_EQUAL &none
+&none         &kp NB_EQUAL &kp NB_MINUS &kp NB_PLUS     &kp NB_LBRC    &kp NB_RBRC       &mmv MOVE_RIGHT          &kp NB_LBKT  &kp NB_RBKT   &kp NB_SEMI   &kp NB_COLON &kp NB_EQUAL &kp NB_BSLH
 &trans        &trans       &trans       &trans          &trans         &trans            &mkp LCLK                &trans       &trans        &trans        &trans       &trans
             >;
 
@@ -120,14 +120,14 @@
 
         layer_4 {
             bindings = <
-&kp NBME_ACUTE  &kp F1          &kp F2          &kp F3              &kp F4          &kp F5            &mmv MOVE_UP             &kp F6           &kp F7          &kp F8          &kp F9                       &kp F10         &kp F11
-&none           &kp N1          &kp N2          &kp N3              &kp N4          &kp N5            &mmv MOVE_DOWN           &kp N6           &kp N7          &kp N8          &kp N9                       &kp N0          &kp NBME_COMBINING_TILDE
-&none           &kp NBME_EXCL   &kp NBME_AT     &kp NBME_HASH       &kp NBME_LT     &kp NBME_GT       &mmv MOVE_LEFT           &kp NBME_LPAR    &kp NBME_RPAR   &kp NBME_ASTRK  &kp NBME_MODIFIER_CIRCUMFLEX  &kp NBME_PIPE   &kp NBME_APOS
-&none           &kp NBME_EQUAL  &kp NBME_MINUS  &kp NBME_PLUS       &kp NBME_LBRC   &kp NBME_RBRC     &mmv MOVE_RIGHT          &kp NBME_LBKT    &kp NBME_RBKT   &kp NBME_SEMI   &kp NBME_COLON               &kp NBME_EQUAL  &none
-&trans          &trans          &trans          &trans              &trans          &trans            &mkp LCLK                &trans           &trans          &trans          &trans                       &trans
+&kp NBME_ACUTE  &kp F1          &kp F2          &kp F3              &kp F4          &kp F5            &mmv MOVE_UP             &kp F6                   &kp F7          &kp F8          &kp F9                       &kp F10         &kp F11
+&none           &kp N1          &kp N2          &kp N3              &kp N4          &kp N5            &mmv MOVE_DOWN           &kp NBME_COMBINING_TILDE &kp N7          &kp N8          &kp N9                       &kp N0          &kp NBME_COMBINING_TILDE
+&none           &kp NBME_EXCL   &kp NBME_AT     &kp NBME_HASH       &kp NBME_LT     &kp NBME_GT       &mmv MOVE_LEFT           &kp NBME_LPAR            &kp NBME_RPAR   &kp NBME_ASTRK  &kp NBME_MODIFIER_CIRCUMFLEX  &kp NBME_PIPE   &kp NBME_APOS
+&none           &kp NBME_EQUAL  &kp NBME_MINUS  &kp NBME_PLUS       &kp NBME_LBRC   &kp NBME_RBRC     &mmv MOVE_RIGHT          &kp NBME_LBKT            &kp NBME_RBKT   &kp NBME_SEMI   &kp NBME_COLON               &kp NBME_EQUAL  &kp NBME_BSLH
+&trans          &trans          &trans          &trans              &trans          &trans            &mkp LCLK                &trans                   &trans          &trans          &trans                       &trans
             >;
 
-            display-name = "SYMBOLMAC";
+            display-name = "SYM_MAC";
             sensor-bindings = <&scroll_encoder>;
         };
 
@@ -140,7 +140,7 @@
 &kp C_MUTE  &trans         &trans          &trans           &trans           &trans             &trans        &trans       &trans         &trans      &trans          &trans
             >;
 
-            display-name = "NAVMAC";
+            display-name = "NAV_MAC";
             sensor-bindings = <&scroll_encoder>;
         };
 
