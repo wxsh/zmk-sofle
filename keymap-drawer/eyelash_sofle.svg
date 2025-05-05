@@ -762,8 +762,9 @@ rect.held, rect.combo.held {
 <g transform="translate(616, 91)" class="key keypos-20">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
 <rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
-<text x="0" y="-4" class="key tap">6</text>
-<text x="0" y="-24" class="key shifted">^</text>
+<text x="0" y="-4" class="key tap">
+<tspan x="0" dy="-1.2em" style="font-size: 86%">(RA(ZMK</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">HID</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">…</tspan>
+</text>
 </g>
 <g transform="translate(672, 91)" class="key keypos-21">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
@@ -965,10 +966,12 @@ rect.held, rect.combo.held {
 <tspan x="0" dy="-1.2em" style="font-size: 86%">(LS(ZMK</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">HID</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">…</tspan>
 </text>
 </g>
-<g transform="translate(896, 224)" class="key none keypos-51">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key none side"/>
-<rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key none"/>
-<use href="#mdi:minus-circle-outline" xlink:href="#mdi:minus-circle-outline" x="-9" y="-13" height="18" width="18.0" class="key none tap glyph mdi:minus-circle-outline"/>
+<g transform="translate(896, 224)" class="key keypos-51">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
+<rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
+<text x="0" y="-4" class="key tap">
+<tspan x="0" dy="-1.2em">((ZMK</tspan><tspan x="0" dy="1.2em">HID</tspan><tspan x="0" dy="1.2em">…</tspan>
+</text>
 </g>
 <g transform="translate(392, 217)" class="key trans keypos-52">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans side"/>
@@ -1671,8 +1674,8 @@ rect.held, rect.combo.held {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
 <rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
 <use href="#mdi:backspace-reverse-outline" xlink:href="#mdi:backspace-reverse-outline" x="-9" y="-13" height="18" width="18.0" class="key tap glyph mdi:backspace-reverse-outline"/>
-<a href="#SYMBOLMAC">
-<text x="0" y="24" class="key hold layer-activator"><tspan style="font-size: 67%">SYMBOLMAC</tspan></text>
+<a href="#SYM_MAC">
+<text x="0" y="24" class="key hold layer-activator"><tspan style="font-size: 86%">SYM_MAC</tspan></text>
 </a></g>
 <g transform="translate(389, 294) rotate(30.0)" class="key enter keypos-57">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key enter side"/>
@@ -1693,8 +1696,8 @@ rect.held, rect.combo.held {
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
 <rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
 <use href="#mdi:backspace" xlink:href="#mdi:backspace" x="-9" y="-13" height="18" width="18.0" class="key tap glyph mdi:backspace"/>
-<a href="#NAVMAC">
-<text x="0" y="24" class="key hold layer-activator">NAVMAC</text>
+<a href="#NAV_MAC">
+<text x="0" y="24" class="key hold layer-activator"><tspan style="font-size: 86%">NAV_MAC</tspan></text>
 </a></g>
 <g transform="translate(672, 259)" class="key keypos-61">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
@@ -1715,8 +1718,8 @@ rect.held, rect.combo.held {
 </g>
 </g>
 </g>
-<g transform="translate(40, 1553)" class="layer-SYMBOLMAC">
-<text x="0" y="28" class="label" id="SYMBOLMAC">SYMBOLMAC:</text>
+<g transform="translate(40, 1553)" class="layer-SYM_MAC">
+<text x="0" y="28" class="label" id="SYM_MAC">SYM_MAC:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 56)" class="key keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
@@ -1830,8 +1833,9 @@ rect.held, rect.combo.held {
 <g transform="translate(616, 91)" class="key keypos-20">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
 <rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
-<text x="0" y="-4" class="key tap">6</text>
-<text x="0" y="-24" class="key shifted">^</text>
+<text x="0" y="-4" class="key tap">
+<tspan x="0" dy="-1.2em" style="font-size: 60%">(LS(LA(ZMK</tspan><tspan x="0" dy="1.2em" style="font-size: 60%">HID</tspan><tspan x="0" dy="1.2em" style="font-size: 60%">…</tspan>
+</text>
 </g>
 <g transform="translate(672, 91)" class="key keypos-21">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
@@ -2033,10 +2037,12 @@ rect.held, rect.combo.held {
 <tspan x="0" dy="-1.2em" style="font-size: 86%">(LC(ZMK</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">HID</tspan><tspan x="0" dy="1.2em" style="font-size: 86%">…</tspan>
 </text>
 </g>
-<g transform="translate(896, 224)" class="key none keypos-51">
-<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key none side"/>
-<rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key none"/>
-<use href="#mdi:minus-circle-outline" xlink:href="#mdi:minus-circle-outline" x="-9" y="-13" height="18" width="18.0" class="key none tap glyph mdi:minus-circle-outline"/>
+<g transform="translate(896, 224)" class="key keypos-51">
+<rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
+<rect rx="4" ry="4" x="-20" y="-24" width="40" height="40" class="key"/>
+<text x="0" y="-4" class="key tap">
+<tspan x="0" dy="-1.2em" style="font-size: 60%">((LS(LA(Z…</tspan><tspan x="0" dy="1.2em" style="font-size: 60%">HID</tspan><tspan x="0" dy="1.2em" style="font-size: 60%">…</tspan>
+</text>
 </g>
 <g transform="translate(392, 217)" class="key trans keypos-52">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key trans side"/>
@@ -2099,8 +2105,8 @@ rect.held, rect.combo.held {
 </g>
 </g>
 </g>
-<g transform="translate(40, 1941)" class="layer-NAVMAC">
-<text x="0" y="28" class="label" id="NAVMAC">NAVMAC:</text>
+<g transform="translate(40, 1941)" class="layer-NAV_MAC">
+<text x="0" y="28" class="label" id="NAV_MAC">NAV_MAC:</text>
 <g transform="translate(0, 56)">
 <g transform="translate(28, 56)" class="key keypos-0">
 <rect rx="6" ry="6" x="-26" y="-26" width="52" height="52" class="key side"/>
