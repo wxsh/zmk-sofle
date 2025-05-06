@@ -255,6 +255,21 @@ parse_config:
     "&bootloader":
       tap: $$mdi:progress-download$$
 
+    # Additional config for custom headers
+    "&kp NB_O_SLASH":
+      tap: 'Ø'
+    "&kp NB_MINUS": 
+      tap: "-"
+    "&kp NB_PLUS":
+      tap: "+"
+    "&kp NB_A_RING":
+      tap: "Å"
+    "&kp NB_AE":
+      tap: "Æ"
+    "&kp NB_APOS":
+      tap: "'"
+      shifted: "§"
+
   # ZMK
   zmk_keycode_map:
     # Symbols
