@@ -66,7 +66,7 @@ layers:
   - $$mdi:apple-keyboard-option$$
   - RIGHT GUI
   SYMBOL:
-  - (RA(ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD EQUAL AND PLUS)))
+  - ´
   - F1
   - F2
   - F3
@@ -117,7 +117,7 @@ layers:
   - ;
   - ':'
   - '='
-  - ((ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD EQUAL AND PLUS)))
+  - \
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
@@ -261,7 +261,7 @@ layers:
   - $$mdi:apple-keyboard-option$$
   - RIGHT GUI
   SYM_MAC:
-  - (ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD EQUAL AND PLUS))
+  - ´
   - F1
   - F2
   - F3
@@ -281,12 +281,12 @@ layers:
   - {t: '4', s: $}
   - {t: '5', s: '%'}
   - {t: '$$mdi:menu-down$$', s: '$$mdi:mouse$$'}
-  - (LS(LA(ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD K))))
+  - ''
   - {t: '7', s: '&'}
   - {t: '8', s: '*'}
   - {t: '9', s: (}
   - {t: '0', s: )}
-  - (LS(LA(ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD K))))
+  - ''
   - {t: '$$mdi:minus-circle-outline$$', type: none}
   - '!'
   - '@'
@@ -312,7 +312,7 @@ layers:
   - ;
   - ':'
   - '='
-  - ((LS(LA(ZMK HID USAGE(HID USAGE KEY, HID USAGE KEY KEYBOARD 7 AND AMPERSAND)))))
+  - \
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
