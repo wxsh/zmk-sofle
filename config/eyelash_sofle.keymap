@@ -56,7 +56,7 @@
         my_mt: my_mod_tap {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
-            flavor = "balanced";
+            flavor = "hold-preferred";
             tapping-term-ms = <150>;
             quick-tap-ms = <150>;
             bindings = <&mo>, <&kp>;
