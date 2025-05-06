@@ -307,8 +307,11 @@ parse_config:
       tap: ";"
     "&kp NB_COLON":
       tap: ":"
-    "&kp NB_BLSH":
+    "&kp NB_BSLH":
       tap: '\'
+    "&kp NB_ACUTE":
+      tap: '´'
+    # Same, but for mac extended
     "&kp NBME_O_SLASH":
       tap: 'Ø'
     "&kp NBME_MINUS": 
@@ -338,7 +341,7 @@ parse_config:
       tap: "{"
     "&kp NBME_RBRC":
       tap: "}"
-    "&kp NBME_TILDE":
+    "&kp NBME_COMBINING_TILDE":
       tap: ""
     "&kp NBME_LPAR": 
       tap: "("
@@ -360,8 +363,10 @@ parse_config:
       tap: ";"
     "&kp NBME_COLON":
       tap: ":"
-    "&kp NBME_BLSH":
+    "&kp NBME_BSLH":
       tap: '\'
+    "&kp NBME_ACUTE":
+      tap: '´'
 
   # ZMK
   zmk_keycode_map:
