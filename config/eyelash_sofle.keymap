@@ -61,6 +61,7 @@
             quick-tap-ms = <150>;
             bindings = <&mo>, <&kp>;
             display-name = "Layer-Tap";
+            hold-while-undecided;
         };
     };
 
