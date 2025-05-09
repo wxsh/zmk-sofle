@@ -286,7 +286,7 @@ parse_config:
     "&kp NB_RBRC":
       tap: "}"
     "&kp NB_TILDE":
-      tap: ""
+      tap: "~"
     "&kp NB_LPAR": 
       tap: "("
     "&kp NB_RPAR":
@@ -342,7 +342,7 @@ parse_config:
     "&kp NBME_RBRC":
       tap: "}"
     "&kp NBME_COMBINING_TILDE":
-      tap: ""
+      tap: "~"
     "&kp NBME_LPAR": 
       tap: "("
     "&kp NBME_RPAR":
