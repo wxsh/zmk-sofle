@@ -8,6 +8,8 @@ manifest:
       # - https://docs.zephyrproject.org/3.5.0/develop/west/manifest.html#projects
     - name: carrefinho                            # Prospector dongle
       url-base: https://github.com/carrefinho     # Prospector dongle
+    - name: janpfischer                           # zmk-dongle-screen
+      url-base: https://github.com/janpfischer    # zmk-dongle-screen
   projects:
     - name: eyelash_sofle
       url: https://github.com/wxsh/zmk-sofle
@@ -19,5 +21,8 @@ manifest:
     - name: prospector-zmk-module                 # Prospector dongle
       remote: carrefinho                          # Prospector dongle
       revision: main                              # Prospector dongle
+    - name: zmk-dongle-screen
+      remote: janpfischer
+      revision: main
   self:
     path: config
