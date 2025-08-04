@@ -257,9 +257,9 @@ layers:
   - {t: '$$mdi:keyboard-return$$', type: enter}
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:backspace$$', h: NAV_MAC}
-  - $$mdi:backspace-reverse-outline$$
+  - Gui+$$mdi:apple-keyboard-option$$
   - $$mdi:apple-keyboard-option$$
-  - RIGHT GUI
+  - Gui+Sft+$$mdi:apple-keyboard-option$$
   SYM_MAC:
   - ´
   - F1
