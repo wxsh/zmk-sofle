@@ -16,7 +16,7 @@ manifest:
       revision: Dongle
     - name: zmk
       remote: zmkfirmware
-      revision: main
+      revision: v0.3.0
       import: app/west.yml
     - name: prospector-zmk-module                 # Prospector dongle
       remote: carrefinho                          # Prospector dongle
