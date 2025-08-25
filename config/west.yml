@@ -21,8 +21,8 @@ manifest:
     - name: prospector-zmk-module                 # Prospector dongle
       remote: carrefinho                          # Prospector dongle
       revision: main                              # Prospector dongle
-    - name: zmk-dongle-screen
-      remote: janpfischer
-      revision: main
+    - name: zmk-dongle-screen                     # zmk-dongle-screen
+      remote: janpfischer                         # zmk-dongle-screen
+      revision: 0.1.0
   self:
     path: config
