@@ -42,7 +42,8 @@ Shared at the root:
 
 ## Building and verifying
 
-- CI (`.github/workflows/build.yml`) is the source of truth for whether the firmware compiles.
+- CI (`.github/workflows/build.yml`) is the source of truth for whether the firmware compiles. Builds
+  need `arm-none-eabi-gcc` because `p256-cortex-m4-sys` (BLE pairing) compiles C for the target.
 - The dev sandbox has no host C linker, so `cargo build`/`cargo check` fail here. What does work:
   - `cargo generate-lockfile` (dependency resolution)
   - `rustfmt --check` (syntax)

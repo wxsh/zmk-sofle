@@ -17,6 +17,7 @@ The keymap is in `left/src/keymap.rs`, the Norwegian keycodes in `left/src/nb.rs
 CI builds UF2 images on every push (artifact `firmware`). Locally:
 
 ```shell
+sudo apt install gcc-arm-none-eabi   # macOS: brew install --cask gcc-arm-embedded
 rustup target add thumbv7em-none-eabihf
 rustup component add llvm-tools
 cargo install cargo-make cargo-binutils cargo-hex-to-uf2

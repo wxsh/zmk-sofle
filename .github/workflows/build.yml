@@ -24,6 +24,10 @@ jobs:
             right
             dongle
 
+      # p256-cortex-m4-sys (BLE pairing crypto) compiles C for the target
+      - name: Install ARM GCC
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+
       - name: Install tools
         run: cargo install cargo-make cargo-binutils cargo-hex-to-uf2
 
