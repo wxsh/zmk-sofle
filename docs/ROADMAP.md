@@ -69,10 +69,6 @@ ZMK's `&soft_off` on ADJUST has no RMK equivalent; the key is currently `XXXXXXX
 - ZMK runs `&bootloader`/`&sys_reset` on the half where the key is pressed.
 - In RMK these actions only reach the left half. The right-hand keys on ADJUST now reboot the left half.
 
-### Caps Word with the Norwegian layout
-RMK's Caps Word keeps going on US `-` (HID Minus), which is `+` on Norwegian. Norwegian `-` is HID
-Slash, which probably ends Caps Word and isn't shifted to `_`. Not verified yet.
-
 ### Mouse key and scroll tuning
 ZMK's settings:
 - Move: 1200 px/s, scaled 2x, linear acceleration over 500ms, 16ms trigger period.

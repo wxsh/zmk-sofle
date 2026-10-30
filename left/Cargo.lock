@@ -2055,8 +2055,6 @@ dependencies = [
 [[package]]
 name = "rmk-types"
 version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e99d79529fd045848d7692504eb733fb4dd7407f2ba1cf11397508cc68125140"
 dependencies = [
  "bitfield-struct",
  "cobs",

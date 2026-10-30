@@ -18,6 +18,8 @@ Shared at the root:
 - `keyboard.toml`: RMK compile-time constants only (`ble_profiles_num`, sleep timeout).
 - `memory.x`: nRF52840 with the Adafruit UF2 bootloader; flash starts at 0x1000.
 - `Makefile.toml`: `cargo make uf2` builds all three UF2s into `firmware/`.
+- `patches/`: crates patched via `[patch.crates-io]` in `left/Cargo.toml` (currently `rmk-types`, for
+  Norwegian Caps Word). See `patches/README.md`. Reapply the patch when upgrading RMK.
 
 ## Keymap conventions (`left/src/keymap.rs`)
 

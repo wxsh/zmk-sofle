@@ -56,6 +56,10 @@ xz2 = "0.1.7"
 json = "0.12"
 const-gen = "1.6"
 
+# Caps Word key lists for the Norwegian layout (see patches/README.md)
+[patch.crates-io]
+rmk-types = { path = "../patches/rmk-types" }
+
 [[bin]]
 name = "eyelash-sofle-left"
 path = "src/main.rs"
