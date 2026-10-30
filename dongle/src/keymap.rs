@@ -37,8 +37,8 @@ const GUI_SHIFT_ALT: KeyAction = mods(GUI.with_left_shift(true).with_left_alt(tr
 // BLE keys, with 5 profiles (see keyboard.toml):
 // User0-4 select a profile (hold 5s to clear it), User7 clears the current one.
 const BT_CLR: KeyAction = user!(7);
-/// Switch to the dongle bond slot; hold 5s to forget the dongle and re-pair.
-const DONGLE: KeyAction = user!(10);
+/// Hold 5s to forget both halves; they re-pair with the dongle on their own.
+const CLR_PEER: KeyAction = user!(9);
 
 #[rustfmt::skip]
 pub const fn get_default_keymap() -> [[[KeyAction; COL]; ROW]; NUM_LAYER] {
@@ -97,7 +97,7 @@ pub const fn get_default_keymap() -> [[[KeyAction; COL]; ROW]; NUM_LAYER] {
         // 6: ADJUST
         [
             [shifted!(Grave), user!(0), user!(1),   user!(2),   user!(3),   user!(4),   XXXXXXX,    k!(MouseUp),    k!(F6),     k!(F7),     k!(F8),             k!(F9),     k!(F10),                _______],
-            [_______,       BT_CLR,     DONGLE,     _______,    _______,    _______,    XXXXXXX,    k!(MouseDown),  _______,    _______,    k!(F11),            k!(F12),    shifted!(Minus),        shifted!(Equal)],
+            [_______,       BT_CLR,     CLR_PEER,   _______,    _______,    _______,    XXXXXXX,    k!(MouseDown),  _______,    _______,    k!(F11),            k!(F12),    shifted!(Minus),        shifted!(Equal)],
             [_______,       kbctrl!(OutputUsb), tg!(3), kbctrl!(OutputBluetooth), _______, _______, XXXXXXX, k!(MouseLeft), _______, _______, _______,          _______,    shifted!(LeftBracket),  shifted!(RightBracket)],
             // No &soft_off equivalent in RMK
             [_______,       kbctrl!(Reboot), _______, kbctrl!(Bootloader), _______, _______, XXXXXXX, k!(MouseRight), _______, _______, kbctrl!(Reboot),    XXXXXXX,    kbctrl!(Bootloader),    _______],

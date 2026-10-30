@@ -1,5 +1,5 @@
-//! Eyelash Sofle right half: split peripheral. Scans its matrix and sends key
-//! events and battery level to the left half over BLE.
+//! Eyelash Sofle right half: split peripheral 1. Scans its matrix and sends
+//! key events and battery level to the dongle over BLE.
 
 #![no_std]
 #![no_main]
@@ -85,7 +85,7 @@ fn ble_addr() -> [u8; 6] {
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
-    info!("Eyelash Sofle right (peripheral)");
+    info!("Eyelash Sofle right (peripheral 1)");
     let mut nrf_config = embassy_nrf::config::Config::default();
     nrf_config.dcdc.reg0_voltage = Some(embassy_nrf::config::Reg0Voltage::_3V3);
     nrf_config.dcdc.reg0 = true;
@@ -154,7 +154,7 @@ async fn main(spawner: Spawner) {
 
     join(
         run_all!(matrix, adc_device, battery_processor, storage),
-        run_rmk_split_peripheral(0, sdc, ble_addr()),
+        run_rmk_split_peripheral(1, sdc, ble_addr()),
     )
     .await;
 }

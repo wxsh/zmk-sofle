@@ -5,12 +5,13 @@ Ported from the ZMK config on the `Dongle` branch.
 
 | Crate     | Board                  | Role                                                     |
 |-----------|------------------------|----------------------------------------------------------|
-| `left/`   | Eyelash Sofle left     | Split central: keymap, left matrix, encoder, Vial        |
-| `right/`  | Eyelash Sofle right    | Split peripheral                                         |
-| `dongle/` | Seeed XIAO BLE         | USB relay for the left half (HID + Vial)                 |
+| `dongle/` | Seeed XIAO BLE         | Split central: keymap, Vial, USB to the host             |
+| `left/`   | Eyelash Sofle left     | Split peripheral 0: left matrix, encoder                 |
+| `right/`  | Eyelash Sofle right    | Split peripheral 1: right matrix                         |
 
-The keymap is in `left/src/keymap.rs`, the Norwegian keycodes in `left/src/nb.rs`.
-`keyboard.toml` only holds compile-time constants (BLE profile count, sleep timeout).
+The keymap is in `dongle/src/keymap.rs`, the Norwegian keycodes in `dongle/src/nb.rs`.
+`keyboard.toml` only holds compile-time constants (BLE profile and split peripheral counts, sleep
+timeout).
 
 ## Build
 
@@ -27,13 +28,15 @@ cargo make uf2   # -> firmware/eyelash_sofle_{left,right,dongle}.uf2
 ## Flash and pair
 
 1. Double-tap reset on each board and copy its UF2 to the drive that shows up.
-2. The halves find each other on their own.
-3. Plug in the dongle, then press `DONGLE` on the ADJUST layer (SYM+NAV, second
-   key on the second row) to pair the left half with it. Hold `DONGLE` for 5s to
-   forget the dongle and pair a new one.
+   Flashing new firmware wipes the board's settings (RMK resets storage when the
+   build changes), so Vial changes are lost.
+2. Plug in the dongle. The halves find it on their own: each one advertises its
+   peripheral id, and the dongle saves its address.
+3. To re-pair, hold `CLR_PEER` on the ADJUST layer (SYM+NAV, second key on the
+   second row) for 5s. The dongle forgets both halves and picks them up again.
 
-The `Bootloader`/`Reboot` keys only act on the left half; use the reset button
-for the right half and the dongle.
+The `Bootloader`/`Reboot` keys only act on the dongle; use the reset button for
+the halves.
 
 RMK overwrites the SoftDevice that ZMK relies on. To go back to ZMK, build it for
 the `//zmk` board variant, see the
@@ -41,10 +44,12 @@ the `//zmk` board variant, see the
 
 ## Differences from the ZMK config
 
-- The dongle is a relay; the keymap runs on the left half, which uses more battery.
+- The halves only talk to the dongle; they can't connect to a host directly.
+- The dongle also advertises as a BLE keyboard (`BT0`–`BT4` select its profiles); RMK 0.9 can't turn
+  that off.
 - No dongle screen, RGB underglow or backlight (both are switched off).
 - MAC tri-layer: RMK has a single tri-layer (used for WIN). On SYM_MAC/NAV_MAC
   the other thumb key is a layer-tap to ADJUST instead.
-- `BT_CLR_ALL` is replaced by `DONGLE`; hold a `BT0`–`BT4` key for 5s to clear that profile.
+- `BT_CLR_ALL` is replaced by `CLR_PEER`; hold a `BT0`–`BT4` key for 5s to clear that profile.
 - No `&soft_off` equivalent.
 - Keymap editing uses [Vial](https://get.vial.today/) instead of ZMK Studio. Unlock: hold Esc + the top-right key.

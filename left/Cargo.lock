@@ -317,26 +317,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "const-gen"
-version = "1.6.10"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ac0f11df66d4747a8f4a14a49a8fe2bc257d3db2efbd0af42cdd95a8d0094c3"
-dependencies = [
- "const-gen-derive",
-]
-
-[[package]]
-name = "const-gen-derive"
-version = "1.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eabc01a5585d36649b6bee1f1198d112a7bb4982661d6c18406fba571ce3263e"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
 name = "const-oid"
 version = "0.9.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1057,7 +1037,6 @@ name = "eyelash-sofle-left"
 version = "0.1.0"
 dependencies = [
  "bt-hci",
- "const-gen",
  "cortex-m",
  "cortex-m-rt",
  "defmt 1.2.0",
@@ -1065,13 +1044,11 @@ dependencies = [
  "embassy-executor",
  "embassy-nrf",
  "embassy-time",
- "json",
  "nrf-mpsl",
  "nrf-sdc",
  "panic-probe",
  "rmk",
  "static_cell",
- "xz2",
 ]
 
 [[package]]
@@ -1422,12 +1399,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "json"
-version = "0.12.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "078e285eafdfb6c4b434e0d31e8cfcb5115b651496faca5749b88fafd4f23bfd"
-
-[[package]]
 name = "json5"
 version = "1.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1491,17 +1462,6 @@ dependencies = [
  "scoped-tls",
  "tracing",
  "tracing-subscriber",
-]
-
-[[package]]
-name = "lzma-sys"
-version = "0.1.20"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5fda04ab3764e6cde78b9974eec4f779acaba7c4e84b36eca3cf77c581b85d27"
-dependencies = [
- "cc",
- "libc",
- "pkg-config",
 ]
 
 [[package]]
@@ -1823,12 +1783,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 
 [[package]]
-name = "pkg-config"
-version = "0.3.34"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
-
-[[package]]
 name = "portable-atomic"
 version = "1.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1988,7 +1942,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6e673c9d3f508dfed96a3eba93de67b7b5ad3de8b48068fdeb73334b4de06ec"
 dependencies = [
  "bt-hci",
- "byteorder",
  "cortex-m",
  "crc32fast",
  "defmt 1.2.0",
@@ -2055,9 +2008,10 @@ dependencies = [
 [[package]]
 name = "rmk-types"
 version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e99d79529fd045848d7692504eb733fb4dd7407f2ba1cf11397508cc68125140"
 dependencies = [
  "bitfield-struct",
- "cobs",
  "defmt 1.2.0",
  "heapless 0.9.3",
  "postcard",
@@ -2381,17 +2335,6 @@ name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-
-[[package]]
-name = "syn"
-version = "1.0.109"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
 
 [[package]]
 name = "syn"
@@ -2803,15 +2746,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
 dependencies = [
  "memchr",
-]
-
-[[package]]
-name = "xz2"
-version = "0.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "388c44dc09d76f1536602ead6d325eb532f5c122f17782bd57fb47baeeb767e2"
-dependencies = [
- "lzma-sys",
 ]
 
 [[package]]

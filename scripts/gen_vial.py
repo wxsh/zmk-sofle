@@ -1,6 +1,6 @@
-"""Generate left/vial.json for the Eyelash Sofle from the ZMK physical layout.
+"""Generate dongle/vial.json for the Eyelash Sofle from the ZMK physical layout.
 
-Usage: python3 scripts/gen_vial.py left/vial.json
+Usage: python3 scripts/gen_vial.py dongle/vial.json
 
 Edit this script rather than vial.json by hand. Keep `custom` in sync with the
 BLE user keys (it depends on ble_profiles_num in keyboard.toml).
@@ -46,8 +46,7 @@ custom = [
     ("PREV_BT", "Previous Bluetooth profile"),
     ("CLR_BT", "Clear bond of the current profile"),
     ("SWITCH", "Switch default output between USB/BLE"),
-    ("CLR_PEER", "Forget the bonded split peer (hold 5s)"),
-    ("DONGLE", "Switch to the dongle (hold 5s to re-pair)"),
+    ("CLR_PEER", "Forget both halves so they re-pair (hold 5s)"),
 ]
 
 vial = {

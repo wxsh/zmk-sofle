@@ -55,13 +55,8 @@
     },
     {
       "name": "CLR_PEER",
-      "title": "Forget the bonded split peer (hold 5s)",
+      "title": "Forget both halves so they re-pair (hold 5s)",
       "shortName": "CLR\nPEER"
-    },
-    {
-      "name": "DONGLE",
-      "title": "Switch to the dongle (hold 5s to re-pair)",
-      "shortName": "DONGLE"
     }
   ],
   "layouts": {

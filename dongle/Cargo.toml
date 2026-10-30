@@ -1,17 +1,17 @@
 [package]
 name = "eyelash-sofle-dongle"
 version = "0.1.0"
-description = "USB dongle (Seeed XIAO BLE) relaying the Eyelash Sofle to the host"
+description = "Eyelash Sofle USB dongle (Seeed XIAO BLE): split central, holds the keymap"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-# `vial` must match the keyboard so the dongle relays Vial instead of Rynk
 rmk = { version = "0.9.0", default-features = false, features = [
     "defmt",
     "storage",
     "vial",
-    "dongle",
+    "split",
+    "adafruit_bl",
     "nrf52840_ble",
 ] }
 nrf-sdc = { version = "0.4.0", features = [
@@ -47,6 +47,15 @@ defmt = "1"
 defmt-rtt = "1"
 panic-probe = { version = "1", features = ["print-defmt"] }
 static_cell = "2"
+
+[build-dependencies]
+xz2 = "0.1.7"
+json = "0.12"
+const-gen = "1.6"
+
+# Caps Word key lists for the Norwegian layout (see patches/README.md)
+[patch.crates-io]
+rmk-types = { path = "../patches/rmk-types" }
 
 [[bin]]
 name = "eyelash-sofle-dongle"

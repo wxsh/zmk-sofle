@@ -1,7 +1,7 @@
 [package]
 name = "eyelash-sofle-left"
 version = "0.1.0"
-description = "Eyelash Sofle left half: split central, holds the keymap and talks to the dongle"
+description = "Eyelash Sofle left half: split peripheral"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 
@@ -9,8 +9,6 @@ license = "MIT OR Apache-2.0"
 rmk = { version = "0.9.0", default-features = false, features = [
     "defmt",
     "storage",
-    "vial",
-    "dongle",
     "split",
     "async_matrix",
     "adafruit_bl",
@@ -50,15 +48,6 @@ defmt = "1"
 defmt-rtt = "1"
 panic-probe = { version = "1", features = ["print-defmt"] }
 static_cell = "2"
-
-[build-dependencies]
-xz2 = "0.1.7"
-json = "0.12"
-const-gen = "1.6"
-
-# Caps Word key lists for the Norwegian layout (see patches/README.md)
-[patch.crates-io]
-rmk-types = { path = "../patches/rmk-types" }
 
 [[bin]]
 name = "eyelash-sofle-left"

@@ -1,6 +1,6 @@
 # Patched crates
 
-Applied with `[patch.crates-io]` in `left/Cargo.toml`. Only `left` runs the keymap, so `right` and `dongle` use
+Applied with `[patch.crates-io]` in `dongle/Cargo.toml`. Only `dongle` runs the keymap, so `left` and `right` use
 the upstream crates.
 
 ## `rmk-types` 0.4.0 (RMK v0.9.0)

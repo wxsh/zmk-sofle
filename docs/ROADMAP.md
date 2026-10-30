@@ -14,9 +14,8 @@ The XIAO dongle drove a colour LCD through `zmk-dongle-screen` (janpfischer, v0.
 What a port needs:
 - RMK's `lcd_async` display driver (supports ST7789) and a custom `Rgb565` `DisplayRenderer`.
   The built-in renderers are monochrome only.
-- A source for the keyboard state. In RMK's relay topology the dongle only sees HID reports, not the
-  layer or the halves' batteries. That requires either the dongle-as-central topology below, or
-  forwarding state from the left half over BLE (not in RMK 0.9).
+- The keyboard state is already there: the dongle is the split central, so it has the layer,
+  modifiers and both halves' battery levels.
 
 ZMK reference: `config/eyelash_sofle.conf` (`CONFIG_DONGLE_SCREEN_*`), `config/west.yml`.
 
@@ -32,16 +31,6 @@ ZMK reference: `boards/arm/eyelash_sofle/eyelash_sofle.dtsi` (`led_strip`), `con
 - PWM backlight on P1.13 (PWM0, 1ms period). ZMK turned it on at boot at 100% and never idled it off.
 - RMK 0.9 has the `light!(Backlight*)` keycodes but no PWM backlight driver. Needs a custom
   processor. P1.13 is currently held low.
-
-## Topology
-
-### Dongle as split central
-- In ZMK the dongle ran the keymap and both halves were peripherals.
-- In RMK the left half is the central and the dongle only relays it, so the left half's battery
-  drains faster.
-- RMK 0.9 has no matrix-less central. A port would need a central with an empty matrix and two
-  peripherals, which isn't supported upstream.
-- This would also give the dongle screen full keyboard state.
 
 ## Keymap behaviour
 
@@ -62,12 +51,13 @@ processor can drive them (`KeyMap::activate_layer` is `pub(crate)` in 0.9).
 ZMK's `&soft_off` on ADJUST has no RMK equivalent; the key is currently `XXXXXXX`.
 
 ### Clear all BT bonds
-- ZMK's `BT_CLR_ALL` has no RMK equivalent. That slot is now `DONGLE`.
+- ZMK's `BT_CLR_ALL` has no RMK equivalent. That slot is now `CLR_PEER` (forget both halves).
 - To clear a profile, hold its `BT0`–`BT4` key for 5s.
 
-### Bootloader/reset on the right half
+### Bootloader/reset on the halves
 - ZMK runs `&bootloader`/`&sys_reset` on the half where the key is pressed.
-- In RMK these actions only reach the left half. The right-hand keys on ADJUST now reboot the left half.
+- In RMK these actions only reach the central, which is now the dongle. Both halves need the reset
+  button.
 
 ### Mouse key and scroll tuning
 ZMK's settings:
@@ -75,7 +65,7 @@ ZMK's settings:
 - Scroll: value 25, scaled 2x.
 - The encoder scrolled with a 100ms tap.
 
-The RMK values in `left/src/main.rs` are approximations and need tuning on hardware.
+The RMK values in `dongle/src/main.rs` are approximations and need tuning on hardware.
 
 ## Tooling
 
