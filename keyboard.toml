@@ -9,3 +9,12 @@ ble_profiles_num = 5
 split_peripherals_num = 2
 # Same as CONFIG_ZMK_IDLE_SLEEP_TIMEOUT (1 hour)
 split_central_sleep_timeout_seconds = 3600
+
+# RMK sizes each event's subscriber slots at build time and adds its own on top
+# of these. One extra each for the dongle's `ScreenController` (dongle/src/screen.rs),
+# which watches key presses (backlight idle) and the USB/BLE state.
+[event.keyboard]
+subs = 4
+
+[event.connection_status_change]
+subs = 2

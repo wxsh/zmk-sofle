@@ -5,7 +5,7 @@ Ported from the ZMK config on the `Dongle` branch.
 
 | Crate     | Board                  | Role                                                     |
 |-----------|------------------------|----------------------------------------------------------|
-| `dongle/` | Seeed XIAO BLE         | Split central: keymap, Vial, USB to the host             |
+| `dongle/` | Seeed XIAO BLE         | Split central: keymap, Vial, USB to the host, screen     |
 | `left/`   | Eyelash Sofle left     | Split peripheral 0: left matrix, encoder                 |
 | `right/`  | Eyelash Sofle right    | Split peripheral 1: right matrix                         |
 
@@ -47,7 +47,8 @@ the `//zmk` board variant, see the
 - The halves only talk to the dongle; they can't connect to a host directly.
 - The dongle also advertises as a BLE keyboard (`BT0`–`BT4` select its profiles); RMK 0.9 can't turn
   that off.
-- No dongle screen, RGB underglow or backlight (both are switched off).
+- The dongle screen shows output, layer, modifiers and both batteries; its brightness is fixed at 80%
+  (off after 5 minutes idle). No RGB underglow or backlight on the halves (both are switched off).
 - MAC tri-layer: RMK has a single tri-layer (used for WIN). On SYM_MAC/NAV_MAC
   the other thumb key is a layer-tap to ADJUST instead.
 - `BT_CLR_ALL` is replaced by `CLR_PEER`; hold a `BT0`–`BT4` key for 5s to clear that profile.

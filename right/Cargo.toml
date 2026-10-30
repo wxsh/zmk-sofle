@@ -13,6 +13,9 @@ rmk = { version = "0.9.0", default-features = false, features = [
     "async_matrix",
     "adafruit_bl",
     "nrf52840_ble",
+    # No display here, but the dongle has one: `display` adds split message variants, so all three
+    # boards need it for the split protocol to match.
+    "display",
 ] }
 nrf-sdc = { version = "0.4.0", features = [
     "defmt",

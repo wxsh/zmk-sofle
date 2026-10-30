@@ -5,19 +5,15 @@ is by impact. "ZMK reference" points at files on the `Dongle` branch.
 
 ## Hardware support
 
-### Dongle screen
-The XIAO dongle drove a colour LCD through `zmk-dongle-screen` (janpfischer, v0.1.0). It showed:
-- Active layer, modifiers and output
-- Battery levels of both halves
-- Brightness controlled from the keyboard (keycodes 115/114, 5% steps, 10–80%, off after 300s idle)
+### Dongle screen brightness keys
+- The screen is ported (`dongle/src/screen.rs`): fixed 80% brightness, off after 300s without a key
+  press.
+- ZMK also configured brightness keycodes (115/114, 5% steps, 10–80%), but no key in the keymap sent
+  them. Porting them would need a keymap key (e.g. a `user!` key) that `ScreenController` reacts to.
+- The shield's APDS9960 ambient light sensor was disabled in ZMK and isn't used.
 
-What a port needs:
-- RMK's `lcd_async` display driver (supports ST7789) and a custom `Rgb565` `DisplayRenderer`.
-  The built-in renderers are monochrome only.
-- The keyboard state is already there: the dongle is the split central, so it has the layer,
-  modifiers and both halves' battery levels.
-
-ZMK reference: `config/eyelash_sofle.conf` (`CONFIG_DONGLE_SCREEN_*`), `config/west.yml`.
+ZMK reference: `config/eyelash_sofle.conf` (`CONFIG_DONGLE_SCREEN_*`), and the shield in
+`janpfischer/zmk-dongle-screen` 0.1.0 (`boards/shields/dongle_screen/`).
 
 ### RGB underglow
 - 7 WS2812 LEDs, data on P1.12 through SPI3 (GRB order), powered through EXT_POWER (P0.13).

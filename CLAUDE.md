@@ -15,6 +15,18 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 - Peripheral ids are the first argument to `run_rmk_split_peripheral` and index the
   `PeripheralMatrixConfig` array in `dongle/src/main.rs`. `split_peripherals_num` in `keyboard.toml`
   must match the number of halves.
+- The split protocol encodes messages by variant index, and rmk's `display` feature adds variants.
+  Keep `display` enabled on **all three** crates (the dongle gets it through `st7789`), or the halves
+  and the dongle misread each other's messages.
+
+## Dongle screen (`dongle/src/screen.rs`)
+
+- 240x280 ST7789V from the ZMK `dongle_screen` shield, used in landscape. Pins are in the module doc.
+- `ScreenRenderer` redraws only the parts that changed. `ScreenController` runs the backlight PWM and
+  records the active transport, which RMK's `RenderContext` doesn't carry.
+- RMK sizes event subscriber slots at build time. Any new `XEvent::subscriber()` in our code needs
+  its slot added under `[event.x]` in `keyboard.toml`, otherwise it panics at runtime.
+- The 131K framebuffer uses `ConstStaticCell` so it never passes through the stack.
 
 Shared at the root:
 - `.cargo/config.toml`: target and `KEYBOARD_TOML_PATH`.

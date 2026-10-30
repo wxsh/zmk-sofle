@@ -1,22 +1,31 @@
 //! USB dongle on a Seeed XIAO BLE (nRF52840): split central. Runs the keymap
 //! and Vial, receives both halves over BLE, and sends reports to the host over
-//! USB (or a BLE host). It has no matrix of its own.
+//! USB (or a BLE host). It has no matrix of its own, but drives a screen.
 
 #![no_std]
 #![no_main]
 
 mod keymap;
 mod nb;
+mod screen;
 mod vial;
 
 use defmt::{info, unwrap};
 use defmt_rtt as _;
+use embassy_embedded_hal::shared_bus::asynch::spi::SpiDevice;
 use embassy_executor::Spawner;
+use embassy_nrf::gpio::{Level, Output, OutputDrive};
+use embassy_nrf::interrupt::{self, InterruptExt};
 use embassy_nrf::mode::Async;
-use embassy_nrf::peripherals::{RNG, USBD};
+use embassy_nrf::peripherals::{RNG, SPI3, USBD};
+use embassy_nrf::pwm::{SimpleConfig, SimplePwm};
+use embassy_nrf::spim::{self, Spim};
 use embassy_nrf::usb::Driver;
 use embassy_nrf::usb::vbus_detect::HardwareVbusDetect;
 use embassy_nrf::{bind_interrupts, rng, usb};
+use embassy_sync::blocking_mutex::raw::NoopRawMutex;
+use embassy_sync::mutex::Mutex;
+use embassy_time::{Delay, Duration};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
@@ -25,16 +34,24 @@ use rmk::ble::BleTransport;
 use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
 };
+use rmk::display::DisplayProcessor;
+use rmk::display::drivers::lcd_async::LcdAsyncDisplay;
+use rmk::display::lcd_async::Builder;
+use rmk::display::lcd_async::interface::SpiInterface;
+use rmk::display::lcd_async::models::ST7789;
+use rmk::display::lcd_async::options::{ColorInversion, Orientation, Rotation};
 use rmk::host::HostService;
 use rmk::keyboard::Keyboard;
 use rmk::split::PeripheralMatrixConfig;
 use rmk::usb::UsbTransport;
 use rmk::{KeymapData, initialize_keymap_and_storage, run_all};
-use static_cell::StaticCell;
+use screen::{ScreenController, ScreenRenderer};
+use static_cell::{ConstStaticCell, StaticCell};
 use vial::{VIAL_KEYBOARD_DEF, VIAL_KEYBOARD_ID};
 
 bind_interrupts!(struct Irqs {
     USBD => usb::InterruptHandler<USBD>;
+    SPIM3 => spim::InterruptHandler<SPI3>;
     RNG => rng::InterruptHandler<RNG>;
     EGU0_SWI0 => nrf_sdc::mpsl::LowPrioInterruptHandler;
     CLOCK_POWER => nrf_sdc::mpsl::ClockInterruptHandler, usb::vbus_detect::InterruptHandler;
@@ -191,5 +208,40 @@ async fn main(spawner: Spawner) {
     )
     .with_host_service(&host_service);
 
-    run_all!(storage, usb_transport, ble_transport, keyboard).await;
+    // Screen: wiring and layout are in screen.rs. SPIM3 is the only SPIM that runs at 32MHz.
+    let mut spi_config = spim::Config::default();
+    spi_config.frequency = spim::Frequency::M32;
+    // Below the priorities the BLE stack reserves
+    interrupt::SPIM3.set_priority(interrupt::Priority::P3);
+    static SPI_BUS: StaticCell<Mutex<NoopRawMutex, Spim<'static>>> = StaticCell::new();
+    let spi_bus = SPI_BUS.init(Mutex::new(Spim::new_txonly(p.SPI3, Irqs, p.P1_13, p.P1_15, spi_config)));
+    let spi = SpiDevice::new(spi_bus, Output::new(p.P1_14, Level::High, OutputDrive::Standard));
+    let dc = Output::new(p.P1_12, Level::Low, OutputDrive::Standard);
+    let lcd = unwrap!(
+        Builder::new(ST7789, SpiInterface::new(spi, dc))
+            .reset_pin(Output::new(p.P0_29, Level::High, OutputDrive::Standard))
+            // In the panel's native portrait orientation, as in the ZMK shield
+            .display_size(240, 280)
+            .display_offset(0, 20)
+            // Landscape (ZMK: CONFIG_DONGLE_SCREEN_HORIZONTAL); Deg270 if upside down
+            .orientation(Orientation::new().rotate(Rotation::Deg90))
+            // Zephyr's st7789v driver always turns inversion on
+            .invert_colors(ColorInversion::Inverted)
+            .init(&mut Delay)
+            .await
+            .ok()
+    );
+    // 131K. Const-initialized so that it never passes through the stack.
+    static FRAMEBUFFER: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT * 2]> =
+        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
+    let mut display = DisplayProcessor::with_renderer(
+        LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take()),
+        ScreenRenderer::default(),
+    )
+    // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
+    .with_render_interval(Duration::from_secs(1));
+    // The default config runs at a 1ms period, as in the ZMK shield
+    let mut screen_controller = ScreenController::new(SimplePwm::new_1ch(p.PWM1, p.P1_11, &SimpleConfig::default()));
+
+    run_all!(storage, usb_transport, ble_transport, keyboard, display, screen_controller).await;
 }
