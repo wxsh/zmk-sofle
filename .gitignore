@@ -1,5 +1,2 @@
-build/
-zmk/
-modules/
-tools/
-.west/
+target/
+firmware/

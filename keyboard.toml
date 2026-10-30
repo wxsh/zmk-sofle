@@ -1,0 +1,9 @@
+# Compile-time constants for RMK, read by its build script through
+# KEYBOARD_TOML_PATH (see .cargo/config.toml). Shared by all three firmwares.
+# The keymap itself lives in left/src/keymap.rs.
+
+[rmk]
+# BT_SEL 0-4 in the old ZMK keymap
+ble_profiles_num = 5
+# Same as CONFIG_ZMK_IDLE_SLEEP_TIMEOUT (1 hour)
+split_central_sleep_timeout_seconds = 3600

@@ -1,11 +1,36 @@
-name: Build ZMK firmware
+name: Build RMK firmware
 on:
   workflow_dispatch:
   push:
     paths-ignore:
       - "keymap-drawer/**"
+      - "README.md"
 
 jobs:
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: thumbv7em-none-eabihf
+          components: llvm-tools
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            left
+            right
+            dongle
+
+      - name: Install tools
+        run: cargo install cargo-make cargo-binutils cargo-hex-to-uf2
+
+      - name: Build UF2 images
+        run: cargo make uf2
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: firmware/*.uf2

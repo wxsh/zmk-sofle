@@ -1,0 +1,29 @@
+# Build UF2 images for all three boards: `cargo make uf2`
+# Output goes to firmware/.
+
+[config]
+default_to_workspace = false
+
+[tasks.install-llvm-tools]
+install_crate = { rustup_component_name = "llvm-tools" }
+
+[tasks.objcopy]
+install_crate = { crate_name = "cargo-binutils", binary = "cargo", test_arg = ["objcopy", "--help"] }
+dependencies = ["install-llvm-tools"]
+script_runner = "@shell"
+script = '''
+mkdir -p firmware
+cd left && cargo objcopy --release -- -O ihex ../firmware/eyelash_sofle_left.hex && cd ..
+cd right && cargo objcopy --release -- -O ihex ../firmware/eyelash_sofle_right.hex && cd ..
+cd dongle && cargo objcopy --release -- -O ihex ../firmware/eyelash_sofle_dongle.hex && cd ..
+'''
+
+[tasks.uf2]
+install_crate = { crate_name = "cargo-hex-to-uf2", binary = "cargo", test_arg = ["hex-to-uf2", "--help"] }
+dependencies = ["objcopy"]
+script_runner = "@shell"
+script = '''
+for board in left right dongle; do
+  cargo hex-to-uf2 --input-path firmware/eyelash_sofle_$board.hex --output-path firmware/eyelash_sofle_$board.uf2 --family nrf52840
+done
+'''

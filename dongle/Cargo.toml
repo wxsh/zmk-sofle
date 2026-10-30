@@ -1,0 +1,70 @@
+[package]
+name = "eyelash-sofle-dongle"
+version = "0.1.0"
+description = "USB dongle (Seeed XIAO BLE) relaying the Eyelash Sofle to the host"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# `vial` must match the keyboard so the dongle relays Vial instead of Rynk
+rmk = { version = "0.9.0", default-features = false, features = [
+    "defmt",
+    "storage",
+    "vial",
+    "dongle",
+    "nrf52840_ble",
+] }
+nrf-sdc = { version = "0.4.0", features = [
+    "defmt",
+    "peripheral",
+    "central",
+    "nrf52840",
+] }
+nrf-mpsl = { version = "0.4.0", features = [
+    "defmt",
+    "critical-section-impl",
+    "nrf52840",
+] }
+bt-hci = { version = "0.10", features = ["defmt"] }
+
+cortex-m = "0.7.7"
+cortex-m-rt = "0.7.5"
+embassy-time = { version = "0.5", features = ["tick-hz-32_768", "defmt", "defmt-timestamp-uptime"] }
+embassy-nrf = { version = "0.11", features = [
+    "defmt",
+    "nrf52840",
+    "time-driver-rtc1",
+    "gpiote",
+    "unstable-pac",
+    "time",
+] }
+embassy-executor = { version = "0.10", features = [
+    "defmt",
+    "platform-cortex-m",
+    "executor-thread",
+] }
+defmt = "1"
+defmt-rtt = "1"
+panic-probe = { version = "1", features = ["print-defmt"] }
+static_cell = "2"
+
+[[bin]]
+name = "eyelash-sofle-dongle"
+path = "src/main.rs"
+test = false
+bench = false
+
+[profile.dev]
+codegen-units = 1
+debug = true
+opt-level = 1
+overflow-checks = true
+lto = false
+panic = "unwind"
+
+[profile.release]
+codegen-units = 1
+debug = true
+opt-level = "z"
+overflow-checks = false
+lto = "fat"
