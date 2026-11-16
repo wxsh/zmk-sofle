@@ -94,6 +94,27 @@ fn build_sdc<'d, const N: usize>(
         .build(p, rng, mpsl, mem)
 }
 
+/// Fit both split links into one 7.5ms connection interval.
+///
+/// The SoftDevice Controller defaults to a 7.5ms event length and 7.5ms central ACL event spacing.
+/// With both halves at a 7.5ms interval, their events then land on top of each other every time,
+/// and the scheduler keeps skipping one link: new connections failed with sync timeout (`0x3E`)
+/// and established ones with supervision timeout (`0x08`). ZMK (Zephyr's own controller) doesn't
+/// reserve time like this. 2.5ms per event spaced 3.75ms apart interleaves the two links and
+/// leaves time for scanning and the BLE host advertiser.
+///
+/// Set once after enabling the controller, as nRF Connect SDK does: the values survive the HCI
+/// Reset that the host sends at startup.
+fn set_sdc_event_timing() {
+    let event_length = sdc::raw::sdc_hci_cmd_vs_event_length_set_t { event_length_us: 2500 };
+    let spacing = sdc::raw::sdc_hci_cmd_vs_central_acl_event_spacing_set_t { central_acl_event_spacing_us: 3750 };
+    // SAFETY: plain HCI command calls with valid parameter structs, after `sdc_enable`
+    unsafe {
+        assert_eq!(sdc::raw::sdc_hci_cmd_vs_event_length_set(&event_length), 0);
+        assert_eq!(sdc::raw::sdc_hci_cmd_vs_central_acl_event_spacing_set(&spacing), 0);
+    }
+}
+
 fn ble_addr() -> [u8; 6] {
     let ficr = embassy_nrf::pac::FICR;
     let high = u64::from(ficr.deviceid(1).read());
@@ -131,6 +152,7 @@ async fn main(spawner: Spawner) {
     // Oversized on purpose: too small fails at boot, too big only logs a warning
     let mut sdc_mem = sdc::Mem::<16384>::new();
     let sdc = unwrap!(build_sdc(sdc_p, &mut rng, mpsl, &mut sdc_mem));
+    set_sdc_event_timing();
 
     let driver = Driver::new(p.USBD, Irqs, HardwareVbusDetect::new(Irqs));
     let flash = Flash::take(mpsl, p.NVMC);

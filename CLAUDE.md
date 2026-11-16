@@ -21,6 +21,9 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 
 - All three `build_sdc` set `.default_tx_power(8)` (+8dBm, as ZMK's `CONFIG_BT_CTLR_TX_PWR_PLUS_8`).
   At the default 0dBm the dongle-to-half link failed to establish (`0x3E` sync timeout).
+- The dongle shortens the SDC's connection event length (2.5ms) and central ACL event spacing (3.75ms)
+  in `set_sdc_event_timing()`. At the 7.5ms defaults the two 7.5ms split links collided every event,
+  and one half kept dropping (`0x3E` on connect, `0x08` supervision timeout after).
 
 ## Dongle screen (`dongle/src/screen.rs`)
 
