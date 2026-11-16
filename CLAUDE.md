@@ -44,7 +44,7 @@ Shared at the root:
 - `memory.x`: nRF52840 with the Adafruit UF2 bootloader; flash starts at 0x1000.
 - `Makefile.toml`: `cargo make uf2` builds all three UF2s into `firmware/`.
 - `patches/`: crates patched via `[patch.crates-io]` in `dongle/Cargo.toml`: `rmk-types` (Norwegian Caps
-  Word) and `rmk` (a second tri-layer). See `patches/README.md`. Reapply both when upgrading RMK.
+  Word) and `rmk` (a second tri-layer, and `caps_word_active()` for the screen). See `patches/README.md`. Reapply both when upgrading RMK.
 
 ## Keymap conventions (`dongle/src/keymap.rs`)
 

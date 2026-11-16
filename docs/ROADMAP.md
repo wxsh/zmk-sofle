@@ -30,15 +30,6 @@ ZMK reference: `boards/arm/eyelash_sofle/eyelash_sofle.dtsi` (`led_strip`), `con
 
 ## Keymap behaviour
 
-### Exact MAC tri-layer
-ZMK used conditional layers: 1+2→6 (WIN) and 4+5→6 (MAC). RMK supports a single `tri_layer`, so MAC
-uses `ltp!(6, …)` on the opposite thumb. This differs from ZMK in two ways:
-- Transparent ADJUST keys fall through to whichever MAC layer was held first.
-- Releasing the first thumb keeps ADJUST active.
-
-Needs upstream support for multiple tri-layers/conditional layers, or a public layer API so a
-processor can drive them (`KeyMap::activate_layer` is `pub(crate)` in 0.9).
-
 ### `hold-while-undecided` on thumb hold-taps
 - ZMK activated the layer immediately while the hold-tap was undecided. RMK has no equivalent.
 - The rest of `my_mt` is ported: hold-preferred, 150ms tapping term, 150ms quick-tap.

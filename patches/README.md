@@ -22,15 +22,18 @@ makes the lists configurable).
 ## `rmk` 0.9.0
 
 The published crate (`rmk-0.9.0.crate`, sha256 `b6e673c9…`, matching `dongle/Cargo.lock`), unpacked as is except
-for two changes marked `PATCHED`:
+for these changes, marked `PATCHED`:
 
 - `src/config/behavior.rs`: `BehaviorConfig::tri_layer_2`, a second tri-layer.
 - `src/keymap.rs`: `update_tri_layer` applies both. The upper layer is on while either pair of layers is held.
+- `src/keyboard.rs`: `rmk::keyboard::caps_word_active()`, for the Caps Word indicator on the dongle's screen. Caps
+  Word's state is private to `Keyboard` and no event carries it, so `CapsWordState` stores when it times out in a
+  static that the function reads.
 
 RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
 ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
 thumbs go down within the tapping term: RMK looks up the second key's action before it resolves the first key as a
 hold, so the second thumb gets MAC's `ltp!(5, …)` and ADJUST never turns on.
 
-When upgrading RMK, unpack the new `rmk` version here and reapply both changes (or drop the patch if upstream
-supports several tri-layers).
+When upgrading RMK, unpack the new `rmk` version here and reapply the changes (or drop them once upstream supports
+several tri-layers and exposes Caps Word's state).

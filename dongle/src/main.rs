@@ -231,8 +231,9 @@ async fn main(spawner: Spawner) {
         STAGING.take(),
     );
     let mut display = DisplayProcessor::with_renderer(lcd_display, ScreenRenderer::default())
-        // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
-        .with_render_interval(Duration::from_secs(1));
+        // Neither the USB state nor Caps Word (on/off, its timeout) triggers a redraw (see screen.rs),
+        // so poll for them. A render that changes nothing sends nothing to the panel.
+        .with_render_interval(Duration::from_millis(250));
     // The default config runs at a 1ms period, as in the ZMK shield
     let mut screen_controller = ScreenController::new(SimplePwm::new_1ch(p.PWM1, p.P1_11, &SimpleConfig::default()));
 

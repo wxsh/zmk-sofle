@@ -4,7 +4,8 @@
 //! Wiring on the XIAO BLE, from the shield's `seeeduino_xiao_ble.overlay`: SPI3 SCK P1.13 (D8),
 //! MOSI P1.15 (D10), CS P1.14 (D9), DC P1.12 (D7), RST P0.29 (D3), backlight PWM P1.11 (D6).
 //!
-//! [`ScreenRenderer`] draws the output, layer, modifiers and both halves' batteries.
+//! [`ScreenRenderer`] draws the output, layer, Caps Lock and Caps Word, modifiers and both halves'
+//! batteries.
 //! [`ScreenController`] runs the backlight (80%, off after 5 minutes without a key press, as in
 //! ZMK) and tracks which transport is active, which `RenderContext` doesn't carry.
 
@@ -12,18 +13,20 @@ use core::fmt::Write as _;
 use core::sync::atomic::{AtomicU8, Ordering};
 
 use embassy_nrf::pwm::{DutyCycle, SimplePwm};
-use embedded_graphics::mono_font::MonoTextStyle;
 use embedded_graphics::mono_font::ascii::FONT_10X20;
+use embedded_graphics::mono_font::{MonoFont, MonoTextStyle};
 use embedded_graphics::pixelcolor::{Rgb565, RgbColor};
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyleBuilder, Rectangle};
 use embedded_graphics::text::{Alignment, Baseline, Text, TextStyleBuilder};
 use heapless::String;
+use profont::PROFONT_24_POINT;
 use rmk::core_traits::Runnable;
 use rmk::display::{DisplayRenderer, RenderContext};
 use rmk::embassy_futures::select::{Either3, select3};
 use rmk::embassy_time::{Duration, Instant, Timer};
 use rmk::event::{ConnectionStatusChangeEvent, ConnectionType, EventSubscriber, KeyboardEvent, SubscribableEvent};
+use rmk::keyboard::caps_word_active;
 use rmk::types::battery::{BatteryStatus, ChargeState};
 use rmk::types::ble::BleState;
 use rmk::types::modifier::ModifierCombination;
@@ -59,7 +62,10 @@ pub const PALETTE: [Rgb565; 8] = [
 ];
 
 const OUTPUT_AREA: Rectangle = Rectangle::new(Point::new(0, 0), Size::new(WIDTH as u32, 44));
-const LAYER_AREA: Rectangle = Rectangle::new(Point::new(0, 52), Size::new(WIDTH as u32, 56));
+/// The layer pill, with Caps Lock and Caps Word stacked to its right
+const LAYER_AREA: Rectangle = Rectangle::new(Point::new(4, 52), Size::new(184, 56));
+const CAPS_LOCK_AREA: Rectangle = Rectangle::new(Point::new(196, 52), Size::new(80, 26));
+const CAPS_WORD_AREA: Rectangle = Rectangle::new(Point::new(196, 82), Size::new(80, 26));
 const MODIFIERS_TOP: i32 = 120;
 const BATTERY_TOP: i32 = 172;
 
@@ -151,6 +157,8 @@ struct Half {
 struct Shown {
     output: Output,
     layer: u8,
+    caps_lock: bool,
+    caps_word: bool,
     modifiers: ModifierCombination,
     halves: [Half; 2],
 }
@@ -167,6 +175,10 @@ impl Shown {
         Self {
             output,
             layer: ctx.layer,
+            // From the host's lock LEDs
+            caps_lock: ctx.caps_lock,
+            // Not in `RenderContext`: read from the patched rmk (see patches/README.md)
+            caps_word: caps_word_active(),
             modifiers: ctx.modifiers,
             halves: core::array::from_fn(|id| Half {
                 connected: ctx.peripherals_connected[id],
@@ -194,6 +206,12 @@ impl DisplayRenderer<Rgb565> for ScreenRenderer {
         if old.map(|o| o.layer) != Some(new.layer) {
             draw_layer(display, new.layer);
         }
+        if old.map(|o| o.caps_lock) != Some(new.caps_lock) {
+            draw_indicator(display, CAPS_LOCK_AREA, "CAPS", new.caps_lock);
+        }
+        if old.map(|o| o.caps_word) != Some(new.caps_word) {
+            draw_indicator(display, CAPS_WORD_AREA, "WORD", new.caps_word);
+        }
         if old.map(|o| o.modifiers) != Some(new.modifiers) {
             draw_modifiers(display, new.modifiers);
         }
@@ -206,7 +224,17 @@ impl DisplayRenderer<Rgb565> for ScreenRenderer {
 }
 
 fn centered_text<D: DrawTarget<Color = Rgb565>>(display: &mut D, text: &str, center: Point, color: Rgb565) {
-    let character_style = MonoTextStyle::new(&FONT_10X20, color);
+    centered_text_in(display, &FONT_10X20, text, center, color);
+}
+
+fn centered_text_in<D: DrawTarget<Color = Rgb565>>(
+    display: &mut D,
+    font: &MonoFont,
+    text: &str,
+    center: Point,
+    color: Rgb565,
+) {
+    let character_style = MonoTextStyle::new(font, color);
     let text_style = TextStyleBuilder::new()
         .alignment(Alignment::Center)
         .baseline(Baseline::Middle)
@@ -250,7 +278,6 @@ fn draw_output<D: DrawTarget<Color = Rgb565>>(display: &mut D, output: Output) {
 }
 
 fn draw_layer<D: DrawTarget<Color = Rgb565>>(display: &mut D, layer: u8) {
-    display.fill_solid(&LAYER_AREA, BACKGROUND).ok();
     let mut text: String<16> = String::new();
     match LAYER_NAMES.get(usize::from(layer)) {
         Some(name) => text.push_str(name).ok(),
@@ -258,9 +285,16 @@ fn draw_layer<D: DrawTarget<Color = Rgb565>>(display: &mut D, layer: u8) {
     };
     // Base layers (WIN, MAC) plain, the rest highlighted
     let fill = if matches!(layer, 0 | 3) { BACKGROUND } else { ACCENT };
-    let pill = Rectangle::new(Point::new(40, LAYER_AREA.top_left.y), Size::new(200, LAYER_AREA.size.height));
-    draw_box(display, pill, fill, FOREGROUND);
-    centered_text(display, &text, pill.center(), FOREGROUND);
+    draw_box(display, LAYER_AREA, fill, FOREGROUND);
+    // 16x29 glyphs: the longest names (7 characters) are 112 pixels wide
+    centered_text_in(display, &PROFONT_24_POINT, &text, LAYER_AREA.center(), FOREGROUND);
+}
+
+/// A labelled box, highlighted when on (modifiers, Caps Lock, Caps Word)
+fn draw_indicator<D: DrawTarget<Color = Rgb565>>(display: &mut D, area: Rectangle, label: &str, on: bool) {
+    let (fill, color) = if on { (ACCENT, FOREGROUND) } else { (BACKGROUND, DIM) };
+    draw_box(display, area, fill, color);
+    centered_text(display, label, area.center(), color);
 }
 
 fn draw_modifiers<D: DrawTarget<Color = Rgb565>>(display: &mut D, modifiers: ModifierCombination) {
@@ -273,9 +307,7 @@ fn draw_modifiers<D: DrawTarget<Color = Rgb565>>(display: &mut D, modifiers: Mod
     ];
     for (i, (label, on)) in held.into_iter().enumerate() {
         let cell = Rectangle::new(Point::new(i as i32 * 70 + 4, MODIFIERS_TOP), Size::new(62, 36));
-        let (fill, color) = if on { (ACCENT, FOREGROUND) } else { (BACKGROUND, DIM) };
-        draw_box(display, cell, fill, color);
-        centered_text(display, label, cell.center(), color);
+        draw_indicator(display, cell, label, on);
     }
 }
 

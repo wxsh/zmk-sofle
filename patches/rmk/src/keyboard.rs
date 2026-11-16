@@ -64,6 +64,16 @@ pub(crate) fn current_led_indicator() -> LedIndicator {
     LedIndicator::from_bits(LOCK_LED_STATES.load(core::sync::atomic::Ordering::Relaxed))
 }
 
+/// PATCHED (Eyelash Sofle, see patches/README.md): when Caps Word times out if no key continues it,
+/// `None` while it is off. Kept by [`CapsWordState`] for the dongle's screen.
+static CAPS_WORD_UNTIL: embassy_sync::blocking_mutex::Mutex<crate::RawMutex, core::cell::Cell<Option<Instant>>> =
+    embassy_sync::blocking_mutex::Mutex::new(core::cell::Cell::new(None));
+
+/// PATCHED (Eyelash Sofle, see patches/README.md): whether Caps Word is on and has not timed out.
+pub fn caps_word_active() -> bool {
+    CAPS_WORD_UNTIL.lock(|until| until.get().is_some_and(|until| Instant::now() < until))
+}
+
 /// State machine for Caps Word
 #[derive(Debug, Default)]
 enum CapsWordState {
@@ -89,11 +99,18 @@ impl CapsWordState {
             timer: Instant::now(),
             shift_current: false,
         };
+        Self::publish_until(Some(Instant::now() + Self::TIMEOUT));
     }
 
     /// Deactivate Caps Word
     fn deactivate(&mut self) {
         *self = CapsWordState::Deactivated;
+        Self::publish_until(None);
+    }
+
+    /// PATCHED (Eyelash Sofle, see patches/README.md): update [`caps_word_active`]
+    fn publish_until(until: Option<Instant>) {
+        CAPS_WORD_UNTIL.lock(|cell| cell.set(until));
     }
 
     /// Toggle Caps Word
@@ -130,6 +147,7 @@ impl CapsWordState {
             if key.is_caps_word_continue_key() && timer.elapsed() < Self::TIMEOUT {
                 *timer = Instant::now();
                 *shift_current = key.is_caps_word_shifted_key();
+                Self::publish_until(Some(*timer + Self::TIMEOUT));
             } else {
                 self.deactivate();
             }

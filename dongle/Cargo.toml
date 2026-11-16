@@ -21,6 +21,8 @@ rmk = { version = "0.9.0", default-features = false, features = [
 ] }
 embassy-sync = "0.8"
 embedded-graphics = "0.8"
+# Larger font for the screen's layer name (embedded-graphics' largest is 10x20)
+profont = "0.7"
 heapless = "0.9"
 nrf-sdc = { version = "0.4.0", features = [
     "defmt",
