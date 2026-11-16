@@ -6,7 +6,6 @@
 //! dirty area to RGB565 a few rows at a time when flushing.
 
 use core::convert::Infallible;
-use core::sync::atomic::{AtomicU32, Ordering};
 
 use embedded_graphics::pixelcolor::Rgb565;
 use embedded_graphics::pixelcolor::raw::{RawData, RawU16};
@@ -20,23 +19,6 @@ use rmk::display::lcd_async::models::Model;
 
 /// Rows converted and sent per transfer when the dirty area is full width
 pub const STAGING_ROWS: usize = 16;
-
-// TEMPORARY diagnostics for the black screen, reported by `check`
-static FLUSHES_STARTED: AtomicU32 = AtomicU32::new(0);
-static FLUSHES_DONE: AtomicU32 = AtomicU32::new(0);
-static FLUSHES_FAILED: AtomicU32 = AtomicU32::new(0);
-static TRANSFERS_DONE: AtomicU32 = AtomicU32::new(0);
-
-/// TEMPORARY: panics with the flush counters, so that they show up in the crash report
-pub fn check() -> ! {
-    panic!(
-        "display check: flushes started {}, done {}, failed {}; transfers done {}",
-        FLUSHES_STARTED.load(Ordering::Relaxed),
-        FLUSHES_DONE.load(Ordering::Relaxed),
-        FLUSHES_FAILED.load(Ordering::Relaxed),
-        TRANSFERS_DONE.load(Ordering::Relaxed),
-    )
-}
 
 pub struct PaletteDisplay<DI, MOD, RST, const W: usize, const H: usize>
 where
@@ -204,7 +186,6 @@ where
         let Some(dirty) = self.dirty else {
             return;
         };
-        FLUSHES_STARTED.fetch_add(1, Ordering::Relaxed);
         let x0 = dirty.top_left.x as usize;
         let y0 = dirty.top_left.y as usize;
         let width = dirty.size.width as usize;
@@ -228,13 +209,10 @@ where
                 .is_err()
             {
                 // Stays dirty, so the next flush retries
-                FLUSHES_FAILED.fetch_add(1, Ordering::Relaxed);
                 return;
             }
-            TRANSFERS_DONE.fetch_add(1, Ordering::Relaxed);
             y += rows;
         }
         self.dirty = None;
-        FLUSHES_DONE.fetch_add(1, Ordering::Relaxed);
     }
 }

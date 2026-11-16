@@ -93,14 +93,6 @@ impl ScreenController {
 
 impl Runnable for ScreenController {
     async fn run(&mut self) -> ! {
-        // TEMPORARY diagnostics for the black screen: report the flush counters after 5s
-        let _ = rmk::embassy_futures::select::select(Timer::after(Duration::from_secs(5)), self.run_loop()).await;
-        crate::palette_display::check()
-    }
-}
-
-impl ScreenController {
-    async fn run_loop(&mut self) -> ! {
         let mut keys = KeyboardEvent::subscriber();
         let mut connection = ConnectionStatusChangeEvent::subscriber();
         let mut lit = true;

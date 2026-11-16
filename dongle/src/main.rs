@@ -5,7 +5,6 @@
 #![no_std]
 #![no_main]
 
-mod crash;
 mod keymap;
 mod nb;
 mod palette_display;
@@ -31,6 +30,8 @@ use embassy_time::{Delay, Duration};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
+use panic_probe as _;
+use palette_display::PaletteDisplay;
 use rmk::ble::BleTransport;
 use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
@@ -107,9 +108,6 @@ fn ble_addr() -> [u8; 6] {
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
-    // Before anything that can panic, which would overwrite it
-    let crash = crash::take();
-    crash::paint_stack();
     info!("Eyelash Sofle dongle (central, XIAO BLE)");
     let p = embassy_nrf::init(embassy_nrf::config::Config::default());
     let mpsl_p = mpsl::Peripherals::new(p.RTC0, p.TIMER0, p.TEMP, p.PPI_CH19, p.PPI_CH30, p.PPI_CH31);
@@ -186,13 +184,6 @@ async fn main(spawner: Spawner) {
     let mut keyboard = Keyboard::new(&keymap);
     let host_service = HostService::new(&keymap, &rmk_config);
 
-    // After a crash: serve the report on a USB serial port instead of starting RMK, until the
-    // dongle is unplugged (see crash.rs). Not on the screen: the panel stayed black whenever it was
-    // set up this early, before the transports, while it works when set up after them (below).
-    if let Some(report) = &crash {
-        crash::serve_over_usb(driver, report).await;
-    }
-
     let mut usb_transport = UsbTransport::new(driver, rmk_config.device_config).with_host_service(&host_service);
     // Peripheral ids are set in each half's firmware
     let mut ble_transport = BleTransport::new(
@@ -242,18 +233,18 @@ async fn main(spawner: Spawner) {
             .await
             .ok()
     );
-    // TEMPORARY A/B test for the black screen: RMK's full RGB565 framebuffer driver instead of
-    // PaletteDisplay. It overflows the stack again (131K framebuffer), but draws first.
-    static FRAMEBUFFER: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT * 2]> =
-        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
-    let lcd_display = rmk::display::drivers::lcd_async::LcdAsyncDisplay::<
-        _,
-        _,
-        _,
-        _,
-        { screen::WIDTH },
-        { screen::HEIGHT },
-    >::new(lcd, FRAMEBUFFER.take());
+    // 4-bit palette framebuffer (33K): a full RGB565 one (131K) left too little RAM for the stack.
+    // Const-initialized so that they never pass through the stack.
+    static PIXELS: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT / 2]> =
+        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT / 2]);
+    static STAGING: ConstStaticCell<[u8; screen::WIDTH * 2 * palette_display::STAGING_ROWS]> =
+        ConstStaticCell::new([0; screen::WIDTH * 2 * palette_display::STAGING_ROWS]);
+    let lcd_display = PaletteDisplay::<_, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(
+        lcd,
+        &screen::PALETTE,
+        PIXELS.take(),
+        STAGING.take(),
+    );
     let mut display = DisplayProcessor::with_renderer(lcd_display, ScreenRenderer::default())
         // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
         .with_render_interval(Duration::from_secs(1));

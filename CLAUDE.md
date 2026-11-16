@@ -31,10 +31,6 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
   "`StaticCell` is already full" panic. `dongle/src/palette_display.rs` stores 4-bit indices into
   `screen::PALETTE` instead (33K); new colors must be added there. Buffers use `ConstStaticCell` so
   they never pass through the stack.
-- `dongle/src/crash.rs` is the dongle's panic handler (instead of `panic-probe`). It saves the
-  message (plus how much stack was never used) in `.uninit` RAM and resets the chip. The next boot
-  doesn't start RMK: it serves the message and reset reason on a USB serial port
-  (`cat /dev/cu.usbmodem*` on macOS) until the dongle is unplugged. Lockup and watchdog resets do the same without a message.
 
 Shared at the root:
 - `.cargo/config.toml`: target and `KEYBOARD_TOML_PATH`.
