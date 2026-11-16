@@ -187,10 +187,11 @@ async fn main(spawner: Spawner) {
     let mut keyboard = Keyboard::new(&keymap);
     let host_service = HostService::new(&keymap, &rmk_config);
 
-    // Screen: wiring and layout are in screen.rs. 16MHz as in ZMK: the shield asks for 31MHz, which
-    // Zephyr rounds down to 16MHz. The panel stayed black at 32MHz.
+    // Screen: wiring and layout are in screen.rs. ZMK ran it at 16MHz (the shield asks for 31MHz,
+    // which Zephyr rounds down). Here the panel stayed black at 32MHz and was unreliable at 16MHz.
+    // A full redraw takes ~0.13s at 8MHz, and normal updates only send the areas that changed.
     let mut spi_config = spim::Config::default();
-    spi_config.frequency = spim::Frequency::M16;
+    spi_config.frequency = spim::Frequency::M8;
     // Below the priorities the BLE stack reserves
     interrupt::SPIM3.set_priority(interrupt::Priority::P3);
     static SPI_BUS: StaticCell<Mutex<NoopRawMutex, Spim<'static>>> = StaticCell::new();
