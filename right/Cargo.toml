@@ -7,7 +7,9 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 rmk = { version = "0.9.0", default-features = false, features = [
-    "defmt",
+    # RMK's logs go to a USB serial port (`cat /dev/cu.usbmodem*` on macOS) while the half is
+    # plugged in. Can't be combined with RMK's `defmt` feature: swap back to "defmt" for RTT.
+    "usb_log",
     "storage",
     "split",
     "async_matrix",
