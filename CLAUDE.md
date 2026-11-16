@@ -64,6 +64,8 @@ Shared at the root:
 
 - CI (`.github/workflows/build.yml`) is the source of truth for whether the firmware compiles. Builds
   need `arm-none-eabi-gcc` because `p256-cortex-m4-sys` (BLE pairing) compiles C for the target.
+  With it installed, the `nrf-*-sys` bindgen step needs `-ffreestanding` (set in the workflow), or
+  it fails with `unknown type name 'uint32_t'` in `cmsis_gcc.h`.
 - The dev sandbox has no host C linker, so `cargo build`/`cargo check` fail here. What does work:
   - `cargo generate-lockfile` (dependency resolution)
   - `rustfmt --check` (syntax)
