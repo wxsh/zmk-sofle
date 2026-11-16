@@ -1,7 +1,7 @@
 # Patched crates
 
 Applied with `[patch.crates-io]` in `dongle/Cargo.toml`. Only `dongle` runs the keymap, so `left` and `right` use
-the upstream crates.
+the upstream crates. Neither patch changes the split messages, so the halves stay compatible.
 
 ## `rmk-types` 0.4.0 (RMK v0.9.0)
 
@@ -18,3 +18,19 @@ Caps Word, `+` (HID Minus) was shifted to `?`, and æ/ø/å ended it without bei
 
 When upgrading RMK, unpack the new `rmk-types` version here and reapply the change (or drop the patch if upstream
 makes the lists configurable).
+
+## `rmk` 0.9.0
+
+The published crate (`rmk-0.9.0.crate`, sha256 `b6e673c9…`, matching `dongle/Cargo.lock`), unpacked as is except
+for two changes marked `PATCHED`:
+
+- `src/config/behavior.rs`: `BehaviorConfig::tri_layer_2`, a second tri-layer.
+- `src/keymap.rs`: `update_tri_layer` applies both. The upper layer is on while either pair of layers is held.
+
+RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
+ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
+thumbs go down within the tapping term: RMK looks up the second key's action before it resolves the first key as a
+hold, so the second thumb gets MAC's `ltp!(5, …)` and ADJUST never turns on.
+
+When upgrading RMK, unpack the new `rmk` version here and reapply both changes (or drop the patch if upstream
+supports several tri-layers).

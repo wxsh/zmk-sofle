@@ -13,33 +13,29 @@ use embassy_executor::Spawner;
 use embassy_nrf::gpio::{Input, Level, Output, OutputDrive};
 use embassy_nrf::interrupt::{self, InterruptExt};
 use embassy_nrf::mode::Async;
-use embassy_nrf::peripherals::{RNG, SAADC, USBD};
+use embassy_nrf::peripherals::{RNG, SAADC};
 use embassy_nrf::saadc::{self, Input as _, Saadc};
-use embassy_nrf::usb::Driver;
-use embassy_nrf::usb::vbus_detect::HardwareVbusDetect;
-use embassy_nrf::{Peri, bind_interrupts, rng, usb};
+use embassy_nrf::{Peri, bind_interrupts, rng};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
 use panic_probe as _;
-use rmk::config::{DeviceConfig, StorageConfig};
+use rmk::config::StorageConfig;
 use rmk::debounce::default_debouncer::DefaultDebouncer;
-use rmk::futures::future::join3;
+use rmk::futures::future::join;
 use rmk::input_device::adc::{AnalogEventType, NrfAdc};
 use rmk::input_device::battery::BatteryProcessor;
 use rmk::matrix::Matrix;
 use rmk::run_all;
 use rmk::split::peripheral::run_rmk_split_peripheral;
 use rmk::storage::new_storage_without_keymap;
-use rmk::usb::run_peripheral_usb;
 use static_cell::StaticCell;
 
 bind_interrupts!(struct Irqs {
     SAADC => saadc::InterruptHandler;
     RNG => rng::InterruptHandler<RNG>;
     EGU0_SWI0 => nrf_sdc::mpsl::LowPrioInterruptHandler;
-    CLOCK_POWER => nrf_sdc::mpsl::ClockInterruptHandler, usb::vbus_detect::InterruptHandler;
-    USBD => usb::InterruptHandler<USBD>;
+    CLOCK_POWER => nrf_sdc::mpsl::ClockInterruptHandler;
     RADIO => nrf_sdc::mpsl::HighPrioInterruptHandler;
     TIMER0 => nrf_sdc::mpsl::HighPrioInterruptHandler;
     RTC0 => nrf_sdc::mpsl::HighPrioInterruptHandler;
@@ -125,16 +121,6 @@ async fn main(spawner: Spawner) {
     let mut sdc_mem = sdc::Mem::<4696>::new();
     let sdc = unwrap!(build_sdc(sdc_p, &mut rng, mpsl, &mut sdc_mem));
 
-    // Only for the USB log (see Cargo.toml); key events go to the dongle over BLE
-    let usb_driver = Driver::new(p.USBD, Irqs, HardwareVbusDetect::new(Irqs));
-    let usb_config = DeviceConfig {
-        vid: 0x4c4b,
-        pid: 0x4644,
-        manufacturer: "sofle",
-        product_name: "Eyelash Sofle right",
-        ..DeviceConfig::default()
-    };
-
     // Underglow (EXT_POWER) and backlight are not supported yet: keep them off
     let _ext_power = Output::new(p.P0_13, Level::Low, OutputDrive::Standard);
     let _backlight = Output::new(p.P1_13, Level::Low, OutputDrive::Standard);
@@ -169,10 +155,9 @@ async fn main(spawner: Spawner) {
     );
     let mut battery_processor = BatteryProcessor::new(1, 5);
 
-    join3(
+    join(
         run_all!(matrix, adc_device, battery_processor, storage),
         run_rmk_split_peripheral(1, sdc, ble_addr()),
-        run_peripheral_usb(usb_driver, usb_config),
     )
     .await;
 }

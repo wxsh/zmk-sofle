@@ -14,6 +14,11 @@ pub(crate) const NUM_ENCODER: usize = 1;
 
 /// Layers that turn on ADJUST when both are held (WIN: SYMBOL + NAV).
 pub(crate) const TRI_LAYER: [u8; 3] = [1, 2, 6];
+/// The same for MAC (SYM_MAC + NAV_MAC; ZMK: conditional layer 4 + 5 -> 6). Needs the patched RMK
+/// (`tri_layer_2`, see patches/README.md): putting `ltp!(6, …)` on the other thumb instead fails
+/// when both thumbs go down within the tapping term, since RMK looks the second key up before the
+/// first one's layer is on.
+pub(crate) const TRI_LAYER_MAC: [u8; 3] = [4, 5, 6];
 
 /// Morse profile index of the thumb layer-taps (`my_mt` in ZMK)
 pub(crate) const HT: u8 = 0;
@@ -81,9 +86,7 @@ pub const fn get_default_keymap() -> [[[KeyAction; COL]; ROW]; NUM_LAYER] {
             [XXXXXXX,       k!(Kc1),    k!(Kc2),    k!(Kc3),    k!(Kc4),    k!(Kc5),    XXXXXXX,    k!(MouseDown),  mac::TILDE, k!(Kc7),                 k!(Kc8),    k!(Kc9),         k!(Kc0),    mac::TILDE],
             [XXXXXXX,       mac::EXCL,  mac::AT,    mac::HASH,  mac::LT,    mac::GT,    XXXXXXX,    k!(MouseLeft),  mac::LPAR,  mac::RPAR,               mac::ASTRK, mac::CIRCUMFLEX, mac::PIPE,  mac::APOS],
             [XXXXXXX,       mac::EQUAL, mac::MINUS, mac::PLUS,  mac::LBRC,  mac::RBRC,  XXXXXXX,    k!(MouseRight), mac::LBKT,  mac::RBKT,               mac::SEMI,  mac::COLON,      mac::EQUAL, mac::BSLH],
-            // RMK has only one tri-layer, so the other thumb reaches ADJUST
-            // directly here (ZMK: conditional layer 4 + 5 -> 6)
-            [_______,       _______,    _______,    _______,    _______,    _______,    XXXXXXX,    k!(MouseBtn1),  _______,    ltp!(6, Backspace, HT),  _______,    _______,         _______,    XXXXXXX],
+            [_______,       _______,    _______,    _______,    _______,    _______,    XXXXXXX,    k!(MouseBtn1),  _______,    _______,                 _______,    _______,         _______,    XXXXXXX],
         ],
         // 5: NAV_MAC
         [
@@ -91,8 +94,7 @@ pub const fn get_default_keymap() -> [[[KeyAction; COL]; ROW]; NUM_LAYER] {
             [_______,       k!(Insert), k!(PrintScreen), k!(Menu), _______, _______,    XXXXXXX,    _______,    k!(PageUp),   wm!(Left, ALT),     k!(Up),     wm!(Right, ALT),     wm!(Backspace, CTRL),    k!(Backspace)],
             [_______,       k!(LAlt),   k!(LCtrl),  k!(LShift), _______,    kbctrl!(CapsWordToggle), XXXXXXX, _______, k!(PageDown), k!(Left),   k!(Down),   k!(Right),           k!(Delete),              k!(Backspace)],
             [_______,       k!(Undo),   k!(Cut),    k!(Copy),   k!(Paste),  _______,    XXXXXXX,    _______,    XXXXXXX,      wm!(Left, GUI),     XXXXXXX,    wm!(Right, GUI),     XXXXXXX,                 _______],
-            // See SYM_MAC: left thumb reaches ADJUST from here
-            [k!(AudioMute), _______,    _______,    _______,    ltp!(6, Delete, HT), _______, XXXXXXX, _______, _______,      _______,            _______,    _______,             _______,                 XXXXXXX],
+            [k!(AudioMute), _______,    _______,    _______,    _______,    _______,    XXXXXXX,    _______,    _______,      _______,            _______,    _______,             _______,                 XXXXXXX],
         ],
         // 6: ADJUST
         [

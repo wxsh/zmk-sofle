@@ -64,6 +64,8 @@ const-gen = "1.6"
 # Caps Word key lists for the Norwegian layout (see patches/README.md)
 [patch.crates-io]
 rmk-types = { path = "../patches/rmk-types" }
+# A second tri-layer, for the MAC layers
+rmk = { path = "../patches/rmk" }
 
 [[bin]]
 name = "eyelash-sofle-dongle"

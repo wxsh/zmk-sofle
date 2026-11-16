@@ -19,6 +19,9 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
   Keep `display` enabled on **all three** crates (the dongle gets it through `st7789`), or the halves
   and the dongle misread each other's messages.
 
+- All three `build_sdc` set `.default_tx_power(8)` (+8dBm, as ZMK's `CONFIG_BT_CTLR_TX_PWR_PLUS_8`).
+  At the default 0dBm the dongle-to-half link failed to establish (`0x3E` sync timeout).
+
 ## Dongle screen (`dongle/src/screen.rs`)
 
 - 240x280 ST7789V from the ZMK `dongle_screen` shield, used in landscape. Pins are in the module doc.
@@ -40,8 +43,8 @@ Shared at the root:
   timeout).
 - `memory.x`: nRF52840 with the Adafruit UF2 bootloader; flash starts at 0x1000.
 - `Makefile.toml`: `cargo make uf2` builds all three UF2s into `firmware/`.
-- `patches/`: crates patched via `[patch.crates-io]` in `dongle/Cargo.toml` (currently `rmk-types`, for
-  Norwegian Caps Word). See `patches/README.md`. Reapply the patch when upgrading RMK.
+- `patches/`: crates patched via `[patch.crates-io]` in `dongle/Cargo.toml`: `rmk-types` (Norwegian Caps
+  Word) and `rmk` (a second tri-layer). See `patches/README.md`. Reapply both when upgrading RMK.
 
 ## Keymap conventions (`dongle/src/keymap.rs`)
 
@@ -49,8 +52,9 @@ Shared at the root:
   `XXXXXXX`), and so is row 4 col 13. The halves are attached at `col_offset: 0` and `7` in
   `dongle/src/main.rs`.
 - Layers: 0 WIN, 1 SYMBOL, 2 NAV, 3 MAC (toggled on top of WIN), 4 SYM_MAC, 5 NAV_MAC, 6 ADJUST.
-- WIN uses RMK's single tri-layer (`TRI_LAYER = [1, 2, 6]`). MAC can't use a second one, so SYM_MAC and
-  NAV_MAC put `ltp!(6, …)` on the opposite thumb key instead.
+- Both OSes reach ADJUST through a tri-layer: WIN `TRI_LAYER = [1, 2, 6]`, MAC `TRI_LAYER_MAC = [4, 5, 6]`
+  (`tri_layer_2`, from the patched `rmk`). Don't put `ltp!(6, …)` on the opposite thumb instead: RMK looks a
+  key up before resolving a pending hold-tap, so that fails when both thumbs go down within the tapping term.
 - Thumb hold-taps use morse profile index `HT` (`HOLD_TAP_PROFILE`, which matches ZMK's `my_mt`). The
   profile is pushed into `behavior_config.morse.profiles` in `main.rs`, so its index must stay in sync.
 - The host OS uses the Norwegian layout. Symbols come from `dongle/src/nb.rs` (`win::` = ZMK `NB_*`,
