@@ -29,7 +29,9 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 - RAM is tight. RMK's `LcdAsyncDisplay` (full RGB565 framebuffer, 131K) left too little stack: it
   silently overflowed into the statics (no guard), which showed up as lockup resets and a
   "`StaticCell` is already full" panic. `dongle/src/palette_display.rs` stores 4-bit indices into
-  `screen::PALETTE` instead (33K); new colors must be added there. Buffers use `ConstStaticCell` so
+  `screen::PALETTE` instead (33K); new colors must be added there. It drives the ST7789 directly
+  (not through lcd-async) so that each flush is one window streamed with CS held low: the panel
+  stayed black when the screen was sent as separate `show_raw_data` windows. Buffers use `ConstStaticCell` so
   they never pass through the stack.
 
 Shared at the root:

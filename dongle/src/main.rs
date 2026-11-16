@@ -13,7 +13,6 @@ mod vial;
 
 use defmt::{info, unwrap};
 use defmt_rtt as _;
-use embassy_embedded_hal::shared_bus::asynch::spi::SpiDevice;
 use embassy_executor::Spawner;
 use embassy_nrf::gpio::{Level, Output, OutputDrive};
 use embassy_nrf::interrupt::{self, InterruptExt};
@@ -24,9 +23,7 @@ use embassy_nrf::spim::{self, Spim};
 use embassy_nrf::usb::Driver;
 use embassy_nrf::usb::vbus_detect::HardwareVbusDetect;
 use embassy_nrf::{bind_interrupts, rng, usb};
-use embassy_sync::blocking_mutex::raw::NoopRawMutex;
-use embassy_sync::mutex::Mutex;
-use embassy_time::{Delay, Duration};
+use embassy_time::Duration;
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
@@ -37,10 +34,6 @@ use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
 };
 use rmk::display::DisplayProcessor;
-use rmk::display::lcd_async::Builder;
-use rmk::display::lcd_async::interface::SpiInterface;
-use rmk::display::lcd_async::models::ST7789;
-use rmk::display::lcd_async::options::{ColorInversion, Orientation, Rotation};
 use rmk::host::HostService;
 use rmk::keyboard::Keyboard;
 use rmk::split::PeripheralMatrixConfig;
@@ -215,32 +208,18 @@ async fn main(spawner: Spawner) {
     spi_config.frequency = spim::Frequency::M16;
     // Below the priorities the BLE stack reserves
     interrupt::SPIM3.set_priority(interrupt::Priority::P3);
-    static SPI_BUS: StaticCell<Mutex<NoopRawMutex, Spim<'static>>> = StaticCell::new();
-    let spi_bus = SPI_BUS.init(Mutex::new(Spim::new_txonly(p.SPI3, Irqs, p.P1_13, p.P1_15, spi_config)));
-    let spi = SpiDevice::new(spi_bus, Output::new(p.P1_14, Level::High, OutputDrive::Standard));
-    let dc = Output::new(p.P1_12, Level::Low, OutputDrive::Standard);
-    let lcd = unwrap!(
-        Builder::new(ST7789, SpiInterface::new(spi, dc))
-            .reset_pin(Output::new(p.P0_29, Level::High, OutputDrive::Standard))
-            // In the panel's native portrait orientation, as in the ZMK shield
-            .display_size(240, 280)
-            .display_offset(0, 20)
-            // Landscape (ZMK: CONFIG_DONGLE_SCREEN_HORIZONTAL); Deg270 if upside down
-            .orientation(Orientation::new().rotate(Rotation::Deg90))
-            // Zephyr's st7789v driver always turns inversion on
-            .invert_colors(ColorInversion::Inverted)
-            .init(&mut Delay)
-            .await
-            .ok()
-    );
     // 4-bit palette framebuffer (33K): a full RGB565 one (131K) left too little RAM for the stack.
     // Const-initialized so that they never pass through the stack.
     static PIXELS: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT / 2]> =
         ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT / 2]);
     static STAGING: ConstStaticCell<[u8; screen::WIDTH * 2 * palette_display::STAGING_ROWS]> =
         ConstStaticCell::new([0; screen::WIDTH * 2 * palette_display::STAGING_ROWS]);
-    let lcd_display = PaletteDisplay::<_, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(
-        lcd,
+    // The panel is reset and set up by `DisplayProcessor`, before it first draws
+    let lcd_display = PaletteDisplay::<{ screen::WIDTH }, { screen::HEIGHT }>::new(
+        Spim::new_txonly(p.SPI3, Irqs, p.P1_13, p.P1_15, spi_config),
+        Output::new(p.P1_14, Level::High, OutputDrive::Standard),
+        Output::new(p.P1_12, Level::Low, OutputDrive::Standard),
+        Output::new(p.P0_29, Level::High, OutputDrive::Standard),
         &screen::PALETTE,
         PIXELS.take(),
         STAGING.take(),

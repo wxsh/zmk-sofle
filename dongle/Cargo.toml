@@ -16,12 +16,8 @@ rmk = { version = "0.9.0", default-features = false, features = [
     # The screen (see src/screen.rs). Implies `display`, which the halves must also enable.
     "st7789",
 ] }
-embassy-embedded-hal = "0.6"
 embassy-sync = "0.8"
-embedded-graphics = "0.8"
-# OutputPin, for the lcd-async reset pin bound in src/palette_display.rs
-embedded-hal = "1"
-heapless = "0.9"
+embedded-graphics = "0.8"heapless = "0.9"
 nrf-sdc = { version = "0.4.0", features = [
     "defmt",
     "peripheral",
