@@ -33,6 +33,11 @@ jobs:
 
       - name: Build UF2 images
         run: cargo make uf2
+        env:
+          # nrf-mpsl-sys/nrf-sdc-sys run bindgen for the target. With the ARM GCC installed, clang
+          # picks up newlib's stdint.h, which leaves uint32_t undefined in CMSIS. Freestanding makes
+          # clang use its own stdint.h instead.
+          BINDGEN_EXTRA_CLANG_ARGS_thumbv7em_none_eabihf: -ffreestanding
 
       - uses: actions/upload-artifact@v4
         with:
