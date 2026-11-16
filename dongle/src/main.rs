@@ -87,6 +87,9 @@ fn build_sdc<'d, const N: usize>(
         // Left and right half
         .central_count(2)?
         .peripheral_count(1)?
+        // +8dBm, the nRF52840's maximum, as the halves (ZMK: CONFIG_BT_CTLR_TX_PWR_PLUS_8). At the
+        // default 0dBm the link to the halves failed to establish (sync timeout).
+        .default_tx_power(8)?
         .buffer_cfg(L2CAP_MTU as u16, L2CAP_MTU as u16, L2CAP_TXQ, L2CAP_RXQ)?
         .build(p, rng, mpsl, mem)
 }

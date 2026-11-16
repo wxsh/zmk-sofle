@@ -64,6 +64,9 @@ fn build_sdc<'d, const N: usize>(
         .support_phy_update_peripheral()
         .support_le_2m_phy()
         .peripheral_count(1)?
+        // +8dBm, the nRF52840's maximum, as in ZMK (CONFIG_BT_CTLR_TX_PWR_PLUS_8). At the default
+        // 0dBm the link to the dongle failed to establish (sync timeout).
+        .default_tx_power(8)?
         .buffer_cfg(L2CAP_MTU as u16, L2CAP_MTU as u16, L2CAP_TXQ, L2CAP_RXQ)?
         .build(p, rng, mpsl, mem)
 }
