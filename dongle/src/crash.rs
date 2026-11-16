@@ -129,7 +129,8 @@ fn panic(info: &PanicInfo) -> ! {
         unsafe {
             let saved = (&raw mut SAVED).cast::<Saved>();
             let len = message.len();
-            (*saved).message[..len].copy_from_slice(message.as_bytes());
+            // Raw copy: a reference to the (possibly uninitialized) buffer isn't allowed
+            core::ptr::copy_nonoverlapping(message.as_ptr(), (&raw mut (*saved).message).cast::<u8>(), len);
             (*saved).len = len as u32;
             (*saved).checksum = checksum(message.as_bytes());
             (&raw mut (*saved).magic).write_volatile(MAGIC);
