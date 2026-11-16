@@ -205,11 +205,8 @@ fn centered_text<D: DrawTarget<Color = Rgb565>>(display: &mut D, text: &str, cen
         .ok();
 }
 
-/// How long `main` shows the crash page before starting RMK
-pub const CRASH_PAGE: Duration = Duration::from_secs(30);
-
 /// The panic message and reset reason from the last crash, wrapped in a small font. Drawn by
-/// `main` before RMK starts, so that it shows up even when the dongle crashes again right away.
+/// `main` in crash-report mode, instead of starting RMK.
 pub fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &CrashReport) {
     const LINE_HEIGHT: i32 = 10;
     const COLUMNS: usize = WIDTH / 6;
@@ -224,9 +221,7 @@ pub fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &Crash
         }
         y += LINE_HEIGHT;
     };
-    let mut title: String<48> = String::new();
-    write!(title, "CRASHED - starting in {}s", CRASH_PAGE.as_secs()).ok();
-    line(display, &title, Rgb565::RED);
+    line(display, "CRASHED - unplug to restart", Rgb565::RED);
     let mut reason: String<80> = String::new();
     write!(reason, "Reset: {}", report.reset_reason()).ok();
     line(display, &reason, Rgb565::YELLOW);

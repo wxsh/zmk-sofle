@@ -28,9 +28,9 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
   its slot added under `[event.x]` in `keyboard.toml`, otherwise it panics at runtime.
 - The 131K framebuffer uses `ConstStaticCell` so it never passes through the stack.
 - `dongle/src/crash.rs` is the dongle's panic handler (instead of `panic-probe`). It saves the
-  message in `.uninit` RAM and resets the chip. The next boot shows it with the reset reason for
-  30s (`CRASH_PAGE`), drawn by `main` before RMK starts. Lockup, watchdog and software resets show
-  the page too, without a message.
+  message in `.uninit` RAM and resets the chip. The next boot doesn't start RMK: it shows the
+  message and reset reason on the screen and on a USB serial port (`cat /dev/cu.usbmodem*` on
+  macOS) until the dongle is unplugged. Lockup and watchdog resets do the same without a message.
 
 Shared at the root:
 - `.cargo/config.toml`: target and `KEYBOARD_TOML_PATH`.

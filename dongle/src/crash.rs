@@ -9,7 +9,13 @@ use core::mem::MaybeUninit;
 use core::panic::PanicInfo;
 use core::sync::atomic::{AtomicBool, Ordering};
 
+use embassy_time::Timer;
+use embassy_usb::class::cdc_acm::{CdcAcmClass, State};
+use embassy_usb::driver::{Driver, EndpointError};
+use embassy_usb::{Builder, Config};
 use heapless::String;
+use rmk::embassy_futures::select::select;
+use static_cell::StaticCell;
 
 pub const MESSAGE_LEN: usize = 256;
 
@@ -40,8 +46,9 @@ const RESET_REASONS: [(u32, &str); 9] = [
     (1 << 19, "NFC"),
     (1 << 20, "VBUS"),
 ];
-/// Resets worth reporting: watchdog, software (a panic, or RMK rebooting on its own) and lockup
-const FAULT_RESETS: u32 = (1 << 1) | (1 << 2) | (1 << 3);
+/// Resets worth reporting without a panic message: watchdog and lockup. Not software resets: the
+/// UF2 bootloader starts the firmware with one after flashing.
+const FAULT_RESETS: u32 = (1 << 1) | (1 << 3);
 
 pub struct CrashReport {
     reset_reason: u32,
@@ -94,6 +101,63 @@ pub fn take() -> Option<CrashReport> {
         }
     };
     (message.is_some() || reset_reason & FAULT_RESETS != 0).then_some(CrashReport { reset_reason, message })
+}
+
+/// Crash-report mode, run instead of RMK after a crash: serves the report on a USB serial port
+/// until the dongle is unplugged, which starts it normally again. On macOS:
+/// `cat /dev/cu.usbmodem*`. Doesn't depend on the screen working.
+pub async fn serve_over_usb<D: Driver<'static>>(driver: D, report: &CrashReport) -> ! {
+    let mut config = Config::new(0x4c4b, 0x4643);
+    config.manufacturer = Some("sofle");
+    config.product = Some("Eyelash Sofle crash report");
+    static CONFIG_DESC: StaticCell<[u8; 256]> = StaticCell::new();
+    static BOS_DESC: StaticCell<[u8; 64]> = StaticCell::new();
+    static MSOS_DESC: StaticCell<[u8; 16]> = StaticCell::new();
+    static CONTROL_BUF: StaticCell<[u8; 64]> = StaticCell::new();
+    static STATE: StaticCell<State<'static>> = StaticCell::new();
+    let mut builder = Builder::new(
+        driver,
+        config,
+        CONFIG_DESC.init([0; 256]),
+        BOS_DESC.init([0; 64]),
+        MSOS_DESC.init([0; 16]),
+        CONTROL_BUF.init([0; 64]),
+    );
+    let mut class = CdcAcmClass::new(&mut builder, STATE.init(State::new()), 64);
+    let mut usb = builder.build();
+
+    let mut text: String<{ MESSAGE_LEN + 160 }> = String::new();
+    write!(
+        text,
+        "\r\nEyelash Sofle dongle crashed\r\nReset: {}\r\n{}\r\n\r\nUnplug the dongle to start it normally.\r\n",
+        report.reset_reason(),
+        report.message.as_deref().unwrap_or("No panic message"),
+    )
+    .ok();
+
+    let print = async {
+        loop {
+            class.wait_connection().await;
+            // Repeated, so a terminal opened later still gets it
+            while send(&mut class, text.as_bytes()).await.is_ok() {
+                Timer::after_secs(3).await;
+            }
+        }
+    };
+    let _ = select(usb.run(), print).await;
+    // Neither future returns
+    cortex_m::peripheral::SCB::sys_reset()
+}
+
+async fn send<D: Driver<'static>>(class: &mut CdcAcmClass<'static, D>, bytes: &[u8]) -> Result<(), EndpointError> {
+    for chunk in bytes.chunks(64) {
+        class.write_packet(chunk).await?;
+    }
+    // A full last packet needs a zero-length one to end the transfer
+    if bytes.len() % 64 == 0 {
+        class.write_packet(&[]).await?;
+    }
+    Ok(())
 }
 
 fn checksum(bytes: &[u8]) -> u32 {

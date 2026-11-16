@@ -26,7 +26,7 @@ use embassy_nrf::usb::vbus_detect::HardwareVbusDetect;
 use embassy_nrf::{bind_interrupts, rng, usb};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::mutex::Mutex;
-use embassy_time::{Delay, Duration, Timer};
+use embassy_time::{Delay, Duration};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
@@ -185,31 +185,6 @@ async fn main(spawner: Spawner) {
     let mut keyboard = Keyboard::new(&keymap);
     let host_service = HostService::new(&keymap, &rmk_config);
 
-    let mut usb_transport = UsbTransport::new(driver, rmk_config.device_config).with_host_service(&host_service);
-    // Peripheral ids are set in each half's firmware
-    let mut ble_transport = BleTransport::new(
-        sdc,
-        ble_addr(),
-        rmk_config,
-        [
-            // 0: left half, 5x6 at cols 0..6
-            PeripheralMatrixConfig {
-                rows: 5,
-                cols: 6,
-                row_offset: 0,
-                col_offset: 0,
-            },
-            // 1: right half, 5x7 at cols 7..14
-            PeripheralMatrixConfig {
-                rows: 5,
-                cols: 7,
-                row_offset: 0,
-                col_offset: 7,
-            },
-        ],
-    )
-    .with_host_service(&host_service);
-
     // Screen: wiring and layout are in screen.rs. 16MHz as in ZMK: the shield asks for 31MHz, which
     // Zephyr rounds down to 16MHz. The panel stayed black at 32MHz.
     let mut spi_config = spim::Config::default();
@@ -241,12 +216,40 @@ async fn main(spawner: Spawner) {
         LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take());
     // The default config runs at a 1ms period, as in the ZMK shield. Turns the backlight on.
     let mut screen_controller = ScreenController::new(SimplePwm::new_1ch(p.PWM1, p.P1_11, &SimpleConfig::default()));
-    // Before RMK starts, so that it shows even if the dongle crashes again right away
+
+    // After a crash: show the report on the screen and on a USB serial port instead of starting
+    // RMK, until the dongle is unplugged (see crash.rs)
     if let Some(report) = &crash {
         screen::draw_crash(&mut lcd_display, report);
         lcd_display.flush().await;
-        Timer::after(screen::CRASH_PAGE).await;
+        crash::serve_over_usb(driver, report).await;
     }
+
+    let mut usb_transport = UsbTransport::new(driver, rmk_config.device_config).with_host_service(&host_service);
+    // Peripheral ids are set in each half's firmware
+    let mut ble_transport = BleTransport::new(
+        sdc,
+        ble_addr(),
+        rmk_config,
+        [
+            // 0: left half, 5x6 at cols 0..6
+            PeripheralMatrixConfig {
+                rows: 5,
+                cols: 6,
+                row_offset: 0,
+                col_offset: 0,
+            },
+            // 1: right half, 5x7 at cols 7..14
+            PeripheralMatrixConfig {
+                rows: 5,
+                cols: 7,
+                row_offset: 0,
+                col_offset: 7,
+            },
+        ],
+    )
+    .with_host_service(&host_service);
+
     let mut display = DisplayProcessor::with_renderer(lcd_display, ScreenRenderer::default())
         // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
         .with_render_interval(Duration::from_secs(1));

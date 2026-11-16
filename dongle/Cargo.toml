@@ -18,6 +18,8 @@ rmk = { version = "0.9.0", default-features = false, features = [
 ] }
 embassy-embedded-hal = "0.6"
 embassy-sync = "0.8"
+# Same version as rmk's. The crash-report serial port (src/crash.rs).
+embassy-usb = "0.6"
 embedded-graphics = "0.8"
 heapless = "0.9"
 nrf-sdc = { version = "0.4.0", features = [
