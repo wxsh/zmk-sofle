@@ -7,6 +7,7 @@
 
 /dts-v1/;
 #include <nordic/nrf52840_qiaa.dtsi>
+#include <common/nordic/nrf52840_uf2_boot_mode.dtsi>
 #include <dt-bindings/led/led.h>
 #include <dt-bindings/zmk/matrix_transform.h>
 
@@ -68,9 +69,9 @@
         >;
     };
 
-    ext-power {
+    // Node name must match the old "EXT_POWER" label to preserve the saved ext-power state.
+    EXT_POWER {
         compatible = "zmk,ext-power-generic";
-        label = "EXT_POWER";
         control-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
          init-delay-ms = <50>;
     };
@@ -86,6 +87,15 @@
             pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
         };
     };
+};
+
+/* Replaces the former BOARD_ENABLE_DCDC / BOARD_ENABLE_DCDC_HV Kconfig options. */
+&reg0 {
+    status = "okay";
+};
+
+&reg1 {
+    regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
 };
 
 &adc {
