@@ -45,7 +45,6 @@ use rmk::keyboard::Keyboard;
 use rmk::split::PeripheralMatrixConfig;
 use rmk::usb::UsbTransport;
 use rmk::{KeymapData, initialize_keymap_and_storage, run_all};
-use palette_display::PaletteDisplay;
 use screen::{ScreenController, ScreenRenderer};
 use static_cell::{ConstStaticCell, StaticCell};
 use vial::{VIAL_KEYBOARD_DEF, VIAL_KEYBOARD_ID};
@@ -243,18 +242,18 @@ async fn main(spawner: Spawner) {
             .await
             .ok()
     );
-    // 4-bit palette framebuffer (33K): a full RGB565 one (131K) left too little RAM for the stack.
-    // Const-initialized so that they never pass through the stack.
-    static PIXELS: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT / 2]> =
-        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT / 2]);
-    static STAGING: ConstStaticCell<[u8; screen::WIDTH * 2 * palette_display::STAGING_ROWS]> =
-        ConstStaticCell::new([0; screen::WIDTH * 2 * palette_display::STAGING_ROWS]);
-    let lcd_display = PaletteDisplay::<_, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(
-        lcd,
-        &screen::PALETTE,
-        PIXELS.take(),
-        STAGING.take(),
-    );
+    // TEMPORARY A/B test for the black screen: RMK's full RGB565 framebuffer driver instead of
+    // PaletteDisplay. It overflows the stack again (131K framebuffer), but draws first.
+    static FRAMEBUFFER: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT * 2]> =
+        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
+    let lcd_display = rmk::display::drivers::lcd_async::LcdAsyncDisplay::<
+        _,
+        _,
+        _,
+        _,
+        { screen::WIDTH },
+        { screen::HEIGHT },
+    >::new(lcd, FRAMEBUFFER.take());
     let mut display = DisplayProcessor::with_renderer(lcd_display, ScreenRenderer::default())
         // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
         .with_render_interval(Duration::from_secs(1));
