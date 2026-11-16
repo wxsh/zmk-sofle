@@ -27,6 +27,9 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 - RMK sizes event subscriber slots at build time. Any new `XEvent::subscriber()` in our code needs
   its slot added under `[event.x]` in `keyboard.toml`, otherwise it panics at runtime.
 - The 131K framebuffer uses `ConstStaticCell` so it never passes through the stack.
+- `dongle/src/crash.rs` is the dongle's panic handler (instead of `panic-probe`). It saves the
+  message in `.uninit` RAM and resets the chip, and the next boot shows it with the reset reason
+  until a key is pressed. Lockups and watchdog resets show a page with no message.
 
 Shared at the root:
 - `.cargo/config.toml`: target and `KEYBOARD_TOML_PATH`.

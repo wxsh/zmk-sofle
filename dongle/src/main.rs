@@ -5,6 +5,7 @@
 #![no_std]
 #![no_main]
 
+mod crash;
 mod keymap;
 mod nb;
 mod screen;
@@ -29,7 +30,6 @@ use embassy_time::{Delay, Duration};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
-use panic_probe as _;
 use rmk::ble::BleTransport;
 use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
@@ -107,6 +107,8 @@ fn ble_addr() -> [u8; 6] {
 
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
+    // Before anything that can panic, which would overwrite it
+    let crash = crash::take();
     info!("Eyelash Sofle dongle (central, XIAO BLE)");
     let p = embassy_nrf::init(embassy_nrf::config::Config::default());
     let mpsl_p = mpsl::Peripherals::new(p.RTC0, p.TIMER0, p.TEMP, p.PPI_CH19, p.PPI_CH30, p.PPI_CH31);
@@ -161,9 +163,7 @@ async fn main(spawner: Spawner) {
     let mut keymap_data = KeymapData::new_with_encoder(keymap::get_default_keymap(), keymap::get_default_encoder_map());
     let mut behavior_config = BehaviorConfig::default();
     behavior_config.tri_layer = Some(keymap::TRI_LAYER);
-    // Not `unwrap!`: the error holds the profile, which only implements `defmt::Format` with rmk's
-    // `defmt` feature (off while `usb_log` is on)
-    assert!(behavior_config.morse.profiles.push(keymap::HOLD_TAP_PROFILE).is_ok());
+    unwrap!(behavior_config.morse.profiles.push(keymap::HOLD_TAP_PROFILE));
     // ZMK ran mouse keys at 1200 px/s scaled 2x, reaching full speed in 500ms
     behavior_config.mouse_key = MouseKeyConfig {
         move_delta: 8,
@@ -239,7 +239,7 @@ async fn main(spawner: Spawner) {
         ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
     let mut display = DisplayProcessor::with_renderer(
         LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take()),
-        ScreenRenderer::default(),
+        ScreenRenderer::new(crash),
     )
     // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
     .with_render_interval(Duration::from_secs(1));
