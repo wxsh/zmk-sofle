@@ -26,7 +26,11 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
   records the active transport, which RMK's `RenderContext` doesn't carry.
 - RMK sizes event subscriber slots at build time. Any new `XEvent::subscriber()` in our code needs
   its slot added under `[event.x]` in `keyboard.toml`, otherwise it panics at runtime.
-- The 131K framebuffer uses `ConstStaticCell` so it never passes through the stack.
+- RAM is tight. RMK's `LcdAsyncDisplay` (full RGB565 framebuffer, 131K) left too little stack: it
+  silently overflowed into the statics (no guard), which showed up as lockup resets and a
+  "`StaticCell` is already full" panic. `dongle/src/palette_display.rs` stores 4-bit indices into
+  `screen::PALETTE` instead (33K); new colors must be added there. Buffers use `ConstStaticCell` so
+  they never pass through the stack.
 - `dongle/src/crash.rs` is the dongle's panic handler (instead of `panic-probe`). It saves the
   message in `.uninit` RAM and resets the chip. The next boot doesn't start RMK: it shows the
   message and reset reason on the screen and on a USB serial port (`cat /dev/cu.usbmodem*` on

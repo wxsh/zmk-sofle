@@ -8,6 +8,7 @@
 mod crash;
 mod keymap;
 mod nb;
+mod palette_display;
 mod screen;
 mod vial;
 
@@ -35,7 +36,6 @@ use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
 };
 use rmk::display::{DisplayDriver, DisplayProcessor};
-use rmk::display::drivers::lcd_async::LcdAsyncDisplay;
 use rmk::display::lcd_async::Builder;
 use rmk::display::lcd_async::interface::SpiInterface;
 use rmk::display::lcd_async::models::ST7789;
@@ -45,6 +45,7 @@ use rmk::keyboard::Keyboard;
 use rmk::split::PeripheralMatrixConfig;
 use rmk::usb::UsbTransport;
 use rmk::{KeymapData, initialize_keymap_and_storage, run_all};
+use palette_display::PaletteDisplay;
 use screen::{ScreenController, ScreenRenderer};
 use static_cell::{ConstStaticCell, StaticCell};
 use vial::{VIAL_KEYBOARD_DEF, VIAL_KEYBOARD_ID};
@@ -210,11 +211,18 @@ async fn main(spawner: Spawner) {
             .await
             .ok()
     );
-    // 131K. Const-initialized so that it never passes through the stack.
-    static FRAMEBUFFER: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT * 2]> =
-        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
-    let mut lcd_display =
-        LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take());
+    // 4-bit palette framebuffer (33K): a full RGB565 one (131K) left too little RAM for the stack.
+    // Const-initialized so that they never pass through the stack.
+    static PIXELS: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT / 2]> =
+        ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT / 2]);
+    static STAGING: ConstStaticCell<[u8; screen::WIDTH * 2 * palette_display::STAGING_ROWS]> =
+        ConstStaticCell::new([0; screen::WIDTH * 2 * palette_display::STAGING_ROWS]);
+    let mut lcd_display = PaletteDisplay::<_, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(
+        lcd,
+        &screen::PALETTE,
+        PIXELS.take(),
+        STAGING.take(),
+    );
     // The default config runs at a 1ms period, as in the ZMK shield. Turns the backlight on.
     let mut screen_controller = ScreenController::new(SimplePwm::new_1ch(p.PWM1, p.P1_11, &SimpleConfig::default()));
 

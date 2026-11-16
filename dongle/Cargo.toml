@@ -21,6 +21,8 @@ embassy-sync = "0.8"
 # Same version as rmk's. The crash-report serial port (src/crash.rs).
 embassy-usb = "0.6"
 embedded-graphics = "0.8"
+# OutputPin, for the lcd-async reset pin bound in src/palette_display.rs
+embedded-hal = "1"
 heapless = "0.9"
 nrf-sdc = { version = "0.4.0", features = [
     "defmt",

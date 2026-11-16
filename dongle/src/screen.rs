@@ -47,6 +47,19 @@ const FOREGROUND: Rgb565 = Rgb565::WHITE;
 const DIM: Rgb565 = Rgb565::new(10, 20, 10);
 const ACCENT: Rgb565 = Rgb565::new(4, 24, 28);
 
+/// Every color drawn on the screen: the framebuffer stores an index into this (see
+/// `palette_display.rs`), so add new colors here. Other colors show as the closest one.
+pub const PALETTE: [Rgb565; 8] = [
+    BACKGROUND,
+    FOREGROUND,
+    DIM,
+    ACCENT,
+    Rgb565::RED,
+    Rgb565::GREEN,
+    Rgb565::YELLOW,
+    Rgb565::CYAN,
+];
+
 const OUTPUT_AREA: Rectangle = Rectangle::new(Point::new(0, 0), Size::new(WIDTH as u32, 44));
 const LAYER_AREA: Rectangle = Rectangle::new(Point::new(0, 52), Size::new(WIDTH as u32, 56));
 const MODIFIERS_TOP: i32 = 120;
