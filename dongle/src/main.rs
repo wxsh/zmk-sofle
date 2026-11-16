@@ -208,9 +208,10 @@ async fn main(spawner: Spawner) {
     )
     .with_host_service(&host_service);
 
-    // Screen: wiring and layout are in screen.rs. SPIM3 is the only SPIM that runs at 32MHz.
+    // Screen: wiring and layout are in screen.rs. 16MHz as in ZMK: the shield asks for 31MHz, which
+    // Zephyr rounds down to 16MHz. The panel stayed black at 32MHz.
     let mut spi_config = spim::Config::default();
-    spi_config.frequency = spim::Frequency::M32;
+    spi_config.frequency = spim::Frequency::M16;
     // Below the priorities the BLE stack reserves
     interrupt::SPIM3.set_priority(interrupt::Priority::P3);
     static SPI_BUS: StaticCell<Mutex<NoopRawMutex, Spim<'static>>> = StaticCell::new();
