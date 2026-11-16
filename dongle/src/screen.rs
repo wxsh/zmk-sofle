@@ -13,7 +13,7 @@ use core::sync::atomic::{AtomicU8, Ordering};
 
 use embassy_nrf::pwm::{DutyCycle, SimplePwm};
 use embedded_graphics::mono_font::MonoTextStyle;
-use embedded_graphics::mono_font::ascii::{FONT_6X10, FONT_10X20};
+use embedded_graphics::mono_font::ascii::FONT_10X20;
 use embedded_graphics::pixelcolor::{Rgb565, RgbColor};
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::{PrimitiveStyleBuilder, Rectangle};
@@ -27,8 +27,6 @@ use rmk::event::{ConnectionStatusChangeEvent, ConnectionType, EventSubscriber, K
 use rmk::types::battery::{BatteryStatus, ChargeState};
 use rmk::types::ble::BleState;
 use rmk::types::modifier::ModifierCombination;
-
-use crate::crash::CrashReport;
 
 /// Landscape size of the panel
 pub const WIDTH: usize = 280;
@@ -216,41 +214,6 @@ fn centered_text<D: DrawTarget<Color = Rgb565>>(display: &mut D, text: &str, cen
     Text::with_text_style(text, center, character_style, text_style)
         .draw(display)
         .ok();
-}
-
-/// The panic message and reset reason from the last crash, wrapped in a small font. Drawn by
-/// `main` in crash-report mode, instead of starting RMK.
-pub fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &CrashReport) {
-    const LINE_HEIGHT: i32 = 10;
-    const COLUMNS: usize = WIDTH / 6;
-    display.clear(BACKGROUND).ok();
-    let mut y = 0;
-    let mut line = |display: &mut D, text: &str, color: Rgb565| {
-        if y < HEIGHT as i32 {
-            let style = MonoTextStyle::new(&FONT_6X10, color);
-            Text::with_baseline(text, Point::new(0, y), style, Baseline::Top)
-                .draw(display)
-                .ok();
-        }
-        y += LINE_HEIGHT;
-    };
-    line(display, "CRASHED - unplug to restart", Rgb565::RED);
-    let mut reason: String<80> = String::new();
-    write!(reason, "Reset: {}", report.reset_reason()).ok();
-    line(display, &reason, Rgb565::YELLOW);
-    line(display, "", FOREGROUND);
-    let message = report.message.as_deref().unwrap_or("No panic message");
-    for paragraph in message.split('\n') {
-        let mut rest = paragraph;
-        loop {
-            let end = rest.char_indices().nth(COLUMNS).map_or(rest.len(), |(i, _)| i);
-            line(display, &rest[..end], FOREGROUND);
-            rest = &rest[end..];
-            if rest.is_empty() {
-                break;
-            }
-        }
-    }
 }
 
 fn draw_box<D: DrawTarget<Color = Rgb565>>(display: &mut D, area: Rectangle, fill: Rgb565, stroke: Rgb565) {
