@@ -161,7 +161,9 @@ async fn main(spawner: Spawner) {
     let mut keymap_data = KeymapData::new_with_encoder(keymap::get_default_keymap(), keymap::get_default_encoder_map());
     let mut behavior_config = BehaviorConfig::default();
     behavior_config.tri_layer = Some(keymap::TRI_LAYER);
-    unwrap!(behavior_config.morse.profiles.push(keymap::HOLD_TAP_PROFILE));
+    // Not `unwrap!`: the error holds the profile, which only implements `defmt::Format` with rmk's
+    // `defmt` feature (off while `usb_log` is on)
+    assert!(behavior_config.morse.profiles.push(keymap::HOLD_TAP_PROFILE).is_ok());
     // ZMK ran mouse keys at 1200 px/s scaled 2x, reaching full speed in 500ms
     behavior_config.mouse_key = MouseKeyConfig {
         move_delta: 8,

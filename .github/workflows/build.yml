@@ -39,6 +39,14 @@ jobs:
           # clang use its own stdint.h instead.
           BINDGEN_EXTRA_CLANG_ARGS_thumbv7em_none_eabihf: -ffreestanding
 
+      # RAM left for the stack: everything between the end of the statics (__sheap) and
+      # _stack_start. A stack overflow corrupts the statics or locks up and resets the chip.
+      - name: Dongle RAM usage
+        working-directory: dongle
+        run: |
+          cargo size --release -- -A
+          cargo nm --release -- --defined-only | grep -E ' (__sheap|_stack_start)$'
+
       - uses: actions/upload-artifact@v4
         with:
           name: firmware
