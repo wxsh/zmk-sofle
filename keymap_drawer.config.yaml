@@ -630,7 +630,7 @@ parse_config:
     LG(V):
       tap: 'V'
       hold: $$mdi:apple-keyboard-command$$
-    # Zoom
+    # Zoo
     RG(RS(A)):
       tap: $$mdi:microphone$$
       hold: zoom
