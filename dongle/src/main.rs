@@ -109,6 +109,7 @@ fn ble_addr() -> [u8; 6] {
 async fn main(spawner: Spawner) {
     // Before anything that can panic, which would overwrite it
     let crash = crash::take();
+    crash::paint_stack();
     info!("Eyelash Sofle dongle (central, XIAO BLE)");
     let p = embassy_nrf::init(embassy_nrf::config::Config::default());
     let mpsl_p = mpsl::Peripherals::new(p.RTC0, p.TIMER0, p.TEMP, p.PPI_CH19, p.PPI_CH30, p.PPI_CH31);

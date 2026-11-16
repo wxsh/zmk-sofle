@@ -160,6 +160,44 @@ async fn send<D: Driver<'static>>(class: &mut CdcAcmClass<'static, D>, bytes: &[
     Ok(())
 }
 
+/// Fills unused stack, so that [`stack_never_used`] can tell how deep it got
+const PAINT: u32 = 0xCCCC_CCCC;
+
+unsafe extern "C" {
+    /// End of the statics (cortex-m-rt), which is where the stack runs out. There's no guard: an
+    /// overflow silently overwrites `.uninit` and then `.bss`.
+    static mut __sheap: u32;
+}
+
+/// Paints the unused stack. Call first thing in `main`.
+pub fn paint_stack() {
+    // SAFETY: everything between the end of the statics and the current frame (minus a margin) is
+    // unused stack
+    unsafe {
+        let mut word = &raw mut __sheap;
+        let top = (cortex_m::register::msp::read() as *mut u32).wrapping_sub(64);
+        while word < top {
+            word.write_volatile(PAINT);
+            word = word.add(1);
+        }
+    }
+}
+
+/// Bytes at the bottom of the stack never used since boot. 0 means the stack overflowed into the
+/// statics.
+fn stack_never_used() -> usize {
+    // SAFETY: only reads the unused stack
+    unsafe {
+        let bottom = &raw const __sheap;
+        let sp = cortex_m::register::msp::read() as *const u32;
+        let mut word = bottom;
+        while word < sp && word.read_volatile() == PAINT {
+            word = word.add(1);
+        }
+        word as usize - bottom as usize
+    }
+}
+
 fn checksum(bytes: &[u8]) -> u32 {
     // FNV-1a
     bytes
@@ -188,7 +226,7 @@ fn panic(info: &PanicInfo) -> ! {
     // A panic while saving (or in the defmt logger) resets right away
     if !PANICKING.swap(true, Ordering::Relaxed) {
         let mut message = String::new();
-        write!(Truncating(&mut message), "{info}").ok();
+        write!(Truncating(&mut message), "Stack never used: {} bytes\n{info}", stack_never_used()).ok();
         // SAFETY: interrupts are off and this runs once
         unsafe {
             let saved = (&raw mut SAVED).cast::<Saved>();
