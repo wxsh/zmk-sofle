@@ -7,7 +7,10 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 rmk = { version = "0.9.0", default-features = false, features = [
-    "defmt",
+    # RMK's logs go to a USB serial port (debug level; `cat /dev/cu.usbmodem*` on macOS), for use
+    # without a probe. Can't be combined with RMK's `defmt` feature: swap back to "defmt" for RTT.
+    # main.rs and the other crates still log through defmt-rtt.
+    "usb_log",
     "storage",
     "vial",
     "split",
