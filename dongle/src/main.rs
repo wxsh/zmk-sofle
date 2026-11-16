@@ -26,7 +26,7 @@ use embassy_nrf::usb::vbus_detect::HardwareVbusDetect;
 use embassy_nrf::{bind_interrupts, rng, usb};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::mutex::Mutex;
-use embassy_time::{Delay, Duration};
+use embassy_time::{Delay, Duration, Timer};
 use nrf_mpsl::Flash;
 use nrf_sdc::mpsl::MultiprotocolServiceLayer;
 use nrf_sdc::{self as sdc, mpsl};
@@ -34,7 +34,7 @@ use rmk::ble::BleTransport;
 use rmk::config::{
     BehaviorConfig, DeviceConfig, MouseKeyConfig, PositionalConfig, RmkConfig, StorageConfig, VialConfig,
 };
-use rmk::display::DisplayProcessor;
+use rmk::display::{DisplayDriver, DisplayProcessor};
 use rmk::display::drivers::lcd_async::LcdAsyncDisplay;
 use rmk::display::lcd_async::Builder;
 use rmk::display::lcd_async::interface::SpiInterface;
@@ -237,14 +237,19 @@ async fn main(spawner: Spawner) {
     // 131K. Const-initialized so that it never passes through the stack.
     static FRAMEBUFFER: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT * 2]> =
         ConstStaticCell::new([0; screen::WIDTH * screen::HEIGHT * 2]);
-    let mut display = DisplayProcessor::with_renderer(
-        LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take()),
-        ScreenRenderer::new(crash),
-    )
-    // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
-    .with_render_interval(Duration::from_secs(1));
-    // The default config runs at a 1ms period, as in the ZMK shield
+    let mut lcd_display =
+        LcdAsyncDisplay::<_, _, _, _, { screen::WIDTH }, { screen::HEIGHT }>::new(lcd, FRAMEBUFFER.take());
+    // The default config runs at a 1ms period, as in the ZMK shield. Turns the backlight on.
     let mut screen_controller = ScreenController::new(SimplePwm::new_1ch(p.PWM1, p.P1_11, &SimpleConfig::default()));
+    // Before RMK starts, so that it shows even if the dongle crashes again right away
+    if let Some(report) = &crash {
+        screen::draw_crash(&mut lcd_display, report);
+        lcd_display.flush().await;
+        Timer::after(screen::CRASH_PAGE).await;
+    }
+    let mut display = DisplayProcessor::with_renderer(lcd_display, ScreenRenderer::default())
+        // The USB state doesn't trigger a redraw (see screen.rs), so poll for it
+        .with_render_interval(Duration::from_secs(1));
 
     run_all!(storage, usb_transport, ble_transport, keyboard, display, screen_controller).await;
 }

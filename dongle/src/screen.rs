@@ -165,36 +165,13 @@ impl Shown {
     }
 }
 
+#[derive(Default)]
 pub struct ScreenRenderer {
     shown: Option<Shown>,
-    /// Shown instead of the status until a key is pressed
-    crash: Option<CrashReport>,
-    crash_drawn: bool,
-}
-
-impl ScreenRenderer {
-    pub fn new(crash: Option<CrashReport>) -> Self {
-        Self {
-            shown: None,
-            crash,
-            crash_drawn: false,
-        }
-    }
 }
 
 impl DisplayRenderer<Rgb565> for ScreenRenderer {
     fn render<D: DrawTarget<Color = Rgb565>>(&mut self, ctx: &RenderContext, display: &mut D) {
-        if let Some(report) = &self.crash {
-            if !ctx.key_press_latch {
-                if !self.crash_drawn {
-                    draw_crash(display, report);
-                    self.crash_drawn = true;
-                }
-                return;
-            }
-            // `shown` is still empty, so the status below is drawn from scratch
-            self.crash = None;
-        }
         let new = Shown::new(ctx);
         let old = self.shown.replace(new);
         if old.is_none() {
@@ -228,8 +205,12 @@ fn centered_text<D: DrawTarget<Color = Rgb565>>(display: &mut D, text: &str, cen
         .ok();
 }
 
-/// The panic message and reset reason from the last crash, wrapped in a small font
-fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &CrashReport) {
+/// How long `main` shows the crash page before starting RMK
+pub const CRASH_PAGE: Duration = Duration::from_secs(30);
+
+/// The panic message and reset reason from the last crash, wrapped in a small font. Drawn by
+/// `main` before RMK starts, so that it shows up even when the dongle crashes again right away.
+pub fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &CrashReport) {
     const LINE_HEIGHT: i32 = 10;
     const COLUMNS: usize = WIDTH / 6;
     display.clear(BACKGROUND).ok();
@@ -243,12 +224,14 @@ fn draw_crash<D: DrawTarget<Color = Rgb565>>(display: &mut D, report: &CrashRepo
         }
         y += LINE_HEIGHT;
     };
-    line(display, "CRASHED - press a key to continue", Rgb565::RED);
+    let mut title: String<48> = String::new();
+    write!(title, "CRASHED - starting in {}s", CRASH_PAGE.as_secs()).ok();
+    line(display, &title, Rgb565::RED);
     let mut reason: String<80> = String::new();
     write!(reason, "Reset: {}", report.reset_reason()).ok();
     line(display, &reason, Rgb565::YELLOW);
     line(display, "", FOREGROUND);
-    let message = report.message.as_deref().unwrap_or("No panic message (lockup or watchdog)");
+    let message = report.message.as_deref().unwrap_or("No panic message");
     for paragraph in message.split('\n') {
         let mut rest = paragraph;
         loop {

@@ -40,8 +40,8 @@ const RESET_REASONS: [(u32, &str); 9] = [
     (1 << 19, "NFC"),
     (1 << 20, "VBUS"),
 ];
-/// A reset that means something went wrong
-const FAULT_RESETS: u32 = (1 << 1) | (1 << 3);
+/// Resets worth reporting: watchdog, software (a panic, or RMK rebooting on its own) and lockup
+const FAULT_RESETS: u32 = (1 << 1) | (1 << 2) | (1 << 3);
 
 pub struct CrashReport {
     reset_reason: u32,
@@ -68,7 +68,7 @@ impl CrashReport {
 }
 
 /// Reads and clears the reset reason and the saved panic message. Call once, first thing in
-/// `main`. Returns a report only after a panic, a watchdog reset or a lockup.
+/// `main`. Returns a report only after a panic or a reset in [`FAULT_RESETS`].
 pub fn take() -> Option<CrashReport> {
     // SAFETY: RESETREAS is a plain read/write-1-to-clear register, and nothing else touches it
     let reset_reason = unsafe {
