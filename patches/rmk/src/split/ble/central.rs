@@ -400,8 +400,11 @@ async fn run_central_manager_task<
 ) -> Result<(), BleHostError<C::Error>> {
     let client = GattClient::<C, P, 10>::new(stack, conn).await?;
 
-    // Split link uses 2M PHY always.
-    update_ble_phy(stack, conn, PhyKind::Le2M).await;
+    // PATCHED (Eyelash Sofle, see patches/README.md): the split link stays on 1M PHY instead of RMK's
+    // 2M. 2M receives ~4dB worse, and the left half's link kept losing packets (late keys, repeats,
+    // supervision timeouts) unless the dongle was within a few cm. Key messages are tiny, so 2M's
+    // speed buys nothing here.
+    update_ble_phy(stack, conn, PhyKind::Le1M).await;
 
     info!("Updating connection parameters for peripheral");
     update_conn_params(stack, conn, &default_split_conn_params()).await;

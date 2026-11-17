@@ -24,6 +24,12 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 - The dongle shortens the SDC's connection event length (2.5ms) and central ACL event spacing (3.75ms)
   in `set_sdc_event_timing()`. At the 7.5ms defaults the two 7.5ms split links collided every event,
   and one half kept dropping (`0x3E` on connect, `0x08` supervision timeout after).
+- The split links run on 1M PHY (patched `rmk`, `run_central_manager_task`), not RMK's 2M: on 2M the left
+  half's link lost packets (late keys, repeats) unless the dongle was within a few cm. ZMK was fine on the
+  same hardware.
+- A host that once paired with a half (the left was the BLE keyboard in the first RMK version, same address)
+  keeps reconnecting to its split advertising and steals it from the dongle (`Long term key request ... no
+  long term key` in the half's log). Fix: forget the old "Eyelash Sofle" pairing on the host.
 
 ## Dongle screen (`dongle/src/screen.rs`)
 

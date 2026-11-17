@@ -31,6 +31,9 @@ for these changes, marked `PATCHED`:
   static that the function reads.
 - `src/split/ble/central.rs`: the "Connection ... lost" log line names the peripheral id, so the dongle's USB log
   shows which half dropped and why.
+- `src/split/ble/central.rs`: the split links use 1M PHY, not 2M. On 2M the left half's link lost packets unless
+  the dongle was a few cm away (late keys, key repeats, supervision timeouts). The halves never request a PHY
+  themselves, so only the dongle needs this.
 
 RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
 ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
