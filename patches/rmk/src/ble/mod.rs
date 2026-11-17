@@ -345,7 +345,13 @@ async fn run_ble_keyboard<
                     warn!("Advertising timeout, sleep and wait for any key");
                     set_ble_state(BleState::Inactive);
 
-                    request_sleep();
+                    // PATCHED (Eyelash Sofle, see patches/README.md): no BLE host found says nothing
+                    // about USB. Sleeping here put the dongle's split links on sleep parameters every 5
+                    // minutes while typing over USB, and the switch back to awake parameters was
+                    // followed by a supervision timeout on the left half.
+                    if crate::state::active_transport() != Some(ConnectionType::Usb) {
+                        request_sleep();
+                    }
 
                     // Wake on key or pointing activity after the advertising
                     // timeout. Subscribed here, not up front: a permanently

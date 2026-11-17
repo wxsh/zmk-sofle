@@ -34,6 +34,9 @@ for these changes, marked `PATCHED`:
 - `src/split/ble/central.rs`: the split links use 1M PHY, not 2M. On 2M the left half's link lost packets unless
   the dongle was a few cm away (late keys, key repeats, supervision timeouts). The halves never request a PHY
   themselves, so only the dongle needs this.
+- `src/ble/mod.rs`: when BLE host advertising times out (300s with no BLE host), the dongle only goes to sleep if
+  USB isn't the active transport. Upstream it always slept, which switched the split links to sleep parameters
+  every ~5 minutes while typing over USB; a supervision timeout on the left half followed the switch back.
 
 RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
 ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
