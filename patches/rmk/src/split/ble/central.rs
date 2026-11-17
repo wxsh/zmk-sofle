@@ -407,7 +407,7 @@ async fn run_central_manager_task<
     update_conn_params(stack, conn, &default_split_conn_params()).await;
 
     let (Either3::First(e) | Either3::Second(e) | Either3::Third(e)) = select3(
-        ble_central_task(&client, conn),
+        ble_central_task(id, &client, conn),
         discover_and_run_manager(id, &client, matrix_config),
         update_conn_params_on_sleep_change(stack, conn),
     )
@@ -416,6 +416,8 @@ async fn run_central_manager_task<
 }
 
 async fn ble_central_task<'a, C: Controller + ControllerCmdAsync<LeSetPhy>, P: PacketPool>(
+    // PATCHED (Eyelash Sofle, see patches/README.md): `id` only to say which half dropped in the log
+    id: usize,
     client: &GattClient<'a, C, P, 10>,
     conn: &Connection<'a, P>,
 ) -> Result<(), BleHostError<C::Error>> {
@@ -424,7 +426,7 @@ async fn ble_central_task<'a, C: Controller + ControllerCmdAsync<LeSetPhy>, P: P
     let conn_events = async {
         loop {
             if let ConnectionEvent::Disconnected { reason } = conn.next().await {
-                info!("Connection lost: {:?}", reason);
+                info!("Connection to peripheral {} lost: {:?}", id, reason);
                 break;
             }
         }

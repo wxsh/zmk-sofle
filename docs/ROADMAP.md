@@ -28,6 +28,13 @@ ZMK reference: `boards/arm/eyelash_sofle/eyelash_sofle.dtsi` (`led_strip`), `con
 - RMK 0.9 has the `light!(Backlight*)` keycodes but no PWM backlight driver. Needs a custom
   processor. P1.13 is currently held low.
 
+### Battery level smoothing
+- The halves report battery from a single VDDH reading every 30s with no averaging, mapped linearly from
+  3.6–4.2V to 0–100% (rmk's `BatteryProcessor`, about 6mV per percent). Ordinary ADC noise and radio-load
+  dips of ~25mV make the dongle's display jump between values (e.g. 73% and 77%).
+- Fix: average several readings on the halves (or the dongle) before reporting, and/or only report changes
+  larger than a few percent. Cosmetic: the swing is far above brown-out voltage.
+
 ## Keymap behaviour
 
 ### `hold-while-undecided` on thumb hold-taps

@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 rmk = { version = "0.9.0", default-features = false, features = [
-    # RMK's logs go to a USB serial port (debug level; `cat /dev/cu.usbmodem*` on macOS), for use
+    # RMK's logs go to a USB serial port (info level, see `log` below; `cat /dev/cu.usbmodem*` on macOS), for use
     # without a probe. Can't be combined with RMK's `defmt` feature: swap back to "defmt" for RTT.
     # main.rs and the other crates still log through defmt-rtt.
     "usb_log",
@@ -19,6 +19,9 @@ rmk = { version = "0.9.0", default-features = false, features = [
     # The screen (see src/screen.rs). Implies `display`, which the halves must also enable.
     "st7789",
 ] }
+# Caps RMK's USB log at info: connects, disconnects (with reason), timeouts and errors, without a line per
+# split message (key press). Lower to `max_level_debug`/`release_max_level_debug` to see those.
+log = { version = "0.4", features = ["max_level_info", "release_max_level_info"] }
 embassy-sync = "0.8"
 embedded-graphics = "0.8"
 # Larger font for the screen's layer name (embedded-graphics' largest is 10x20)

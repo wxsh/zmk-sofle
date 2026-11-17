@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1030" height="396" font-family="sans-serif" font-size="13">
+<rect width="100%" height="100%" fill="#fff"/>
+<polygon points="20.0,50.0 80.0,50.0 80.0,110.0 20.0,110.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="50.0" y="80.0" text-anchor="middle" dominant-baseline="middle">0,0</text>
+<polygon points="80.0,50.0 140.0,50.0 140.0,110.0 80.0,110.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="110.0" y="80.0" text-anchor="middle" dominant-baseline="middle">0,1</text>
+<polygon points="140.0,27.2 200.0,27.2 200.0,87.2 140.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="170.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,2</text>
+<polygon points="200.0,20.0 260.0,20.0 260.0,80.0 200.0,80.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="230.0" y="50.0" text-anchor="middle" dominant-baseline="middle">0,3</text>
+<polygon points="260.0,27.2 320.0,27.2 320.0,87.2 260.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="290.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,4</text>
+<polygon points="320.0,27.2 380.0,27.2 380.0,87.2 320.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="350.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,5</text>
+<polygon points="485.0,27.2 545.0,27.2 545.0,87.2 485.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="515.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,7</text>
+<polygon points="650.0,27.2 710.0,27.2 710.0,87.2 650.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="680.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,8</text>
+<polygon points="710.0,27.2 770.0,27.2 770.0,87.2 710.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="740.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,9</text>
+<polygon points="770.0,20.0 830.0,20.0 830.0,80.0 770.0,80.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="800.0" y="50.0" text-anchor="middle" dominant-baseline="middle">0,10</text>
+<polygon points="830.0,27.2 890.0,27.2 890.0,87.2 830.0,87.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="860.0" y="57.2" text-anchor="middle" dominant-baseline="middle">0,11</text>
+<polygon points="890.0,50.0 950.0,50.0 950.0,110.0 890.0,110.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="920.0" y="80.0" text-anchor="middle" dominant-baseline="middle">0,12</text>
+<polygon points="950.0,50.0 1010.0,50.0 1010.0,110.0 950.0,110.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="980.0" y="80.0" text-anchor="middle" dominant-baseline="middle">0,13</text>
+<polygon points="20.0,110.0 80.0,110.0 80.0,170.0 20.0,170.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="50.0" y="140.0" text-anchor="middle" dominant-baseline="middle">1,0</text>
+<polygon points="80.0,110.0 140.0,110.0 140.0,170.0 80.0,170.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="110.0" y="140.0" text-anchor="middle" dominant-baseline="middle">1,1</text>
+<polygon points="140.0,87.2 200.0,87.2 200.0,147.2 140.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="170.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,2</text>
+<polygon points="200.0,80.0 260.0,80.0 260.0,140.0 200.0,140.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="230.0" y="110.0" text-anchor="middle" dominant-baseline="middle">1,3</text>
+<polygon points="260.0,87.2 320.0,87.2 320.0,147.2 260.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="290.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,4</text>
+<polygon points="320.0,87.2 380.0,87.2 380.0,147.2 320.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="350.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,5</text>
+<polygon points="485.0,147.2 545.0,147.2 545.0,207.2 485.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="515.0" y="177.2" text-anchor="middle" dominant-baseline="middle">1,7</text>
+<polygon points="650.0,87.2 710.0,87.2 710.0,147.2 650.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="680.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,8</text>
+<polygon points="710.0,87.2 770.0,87.2 770.0,147.2 710.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="740.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,9</text>
+<polygon points="770.0,80.0 830.0,80.0 830.0,140.0 770.0,140.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="800.0" y="110.0" text-anchor="middle" dominant-baseline="middle">1,10</text>
+<polygon points="830.0,87.2 890.0,87.2 890.0,147.2 830.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="860.0" y="117.2" text-anchor="middle" dominant-baseline="middle">1,11</text>
+<polygon points="890.0,110.0 950.0,110.0 950.0,170.0 890.0,170.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="920.0" y="140.0" text-anchor="middle" dominant-baseline="middle">1,12</text>
+<polygon points="950.0,110.0 1010.0,110.0 1010.0,170.0 950.0,170.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="980.0" y="140.0" text-anchor="middle" dominant-baseline="middle">1,13</text>
+<polygon points="20.0,170.0 80.0,170.0 80.0,230.0 20.0,230.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="50.0" y="200.0" text-anchor="middle" dominant-baseline="middle">2,0</text>
+<polygon points="80.0,170.0 140.0,170.0 140.0,230.0 80.0,230.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="110.0" y="200.0" text-anchor="middle" dominant-baseline="middle">2,1</text>
+<polygon points="140.0,147.2 200.0,147.2 200.0,207.2 140.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="170.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,2</text>
+<polygon points="200.0,140.0 260.0,140.0 260.0,200.0 200.0,200.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="230.0" y="170.0" text-anchor="middle" dominant-baseline="middle">2,3</text>
+<polygon points="260.0,147.2 320.0,147.2 320.0,207.2 260.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="290.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,4</text>
+<polygon points="320.0,147.2 380.0,147.2 380.0,207.2 320.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="350.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,5</text>
+<polygon points="425.0,87.2 485.0,87.2 485.0,147.2 425.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="455.0" y="117.2" text-anchor="middle" dominant-baseline="middle">2,7</text>
+<polygon points="650.0,147.2 710.0,147.2 710.0,207.2 650.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="680.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,8</text>
+<polygon points="710.0,147.2 770.0,147.2 770.0,207.2 710.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="740.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,9</text>
+<polygon points="770.0,140.0 830.0,140.0 830.0,200.0 770.0,200.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="800.0" y="170.0" text-anchor="middle" dominant-baseline="middle">2,10</text>
+<polygon points="830.0,147.2 890.0,147.2 890.0,207.2 830.0,207.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="860.0" y="177.2" text-anchor="middle" dominant-baseline="middle">2,11</text>
+<polygon points="890.0,170.0 950.0,170.0 950.0,230.0 890.0,230.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="920.0" y="200.0" text-anchor="middle" dominant-baseline="middle">2,12</text>
+<polygon points="950.0,170.0 1010.0,170.0 1010.0,230.0 950.0,230.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="980.0" y="200.0" text-anchor="middle" dominant-baseline="middle">2,13</text>
+<polygon points="20.0,230.0 80.0,230.0 80.0,290.0 20.0,290.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="50.0" y="260.0" text-anchor="middle" dominant-baseline="middle">3,0</text>
+<polygon points="80.0,230.0 140.0,230.0 140.0,290.0 80.0,290.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="110.0" y="260.0" text-anchor="middle" dominant-baseline="middle">3,1</text>
+<polygon points="140.0,207.2 200.0,207.2 200.0,267.2 140.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="170.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,2</text>
+<polygon points="200.0,200.0 260.0,200.0 260.0,260.0 200.0,260.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="230.0" y="230.0" text-anchor="middle" dominant-baseline="middle">3,3</text>
+<polygon points="260.0,207.2 320.0,207.2 320.0,267.2 260.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="290.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,4</text>
+<polygon points="320.0,207.2 380.0,207.2 380.0,267.2 320.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="350.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,5</text>
+<polygon points="545.0,87.2 605.0,87.2 605.0,147.2 545.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="575.0" y="117.2" text-anchor="middle" dominant-baseline="middle">3,7</text>
+<polygon points="650.0,207.2 710.0,207.2 710.0,267.2 650.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="680.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,8</text>
+<polygon points="710.0,207.2 770.0,207.2 770.0,267.2 710.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="740.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,9</text>
+<polygon points="770.0,200.0 830.0,200.0 830.0,260.0 770.0,260.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="800.0" y="230.0" text-anchor="middle" dominant-baseline="middle">3,10</text>
+<polygon points="830.0,207.2 890.0,207.2 890.0,267.2 830.0,267.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="860.0" y="237.2" text-anchor="middle" dominant-baseline="middle">3,11</text>
+<polygon points="890.0,230.0 950.0,230.0 950.0,290.0 890.0,290.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="920.0" y="260.0" text-anchor="middle" dominant-baseline="middle">3,12</text>
+<polygon points="950.0,230.0 1010.0,230.0 1010.0,290.0 950.0,290.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="980.0" y="260.0" text-anchor="middle" dominant-baseline="middle">3,13</text>
+<polygon points="410.0,222.8 470.0,222.8 470.0,282.8 410.0,282.8" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="440.0" y="252.8" text-anchor="middle" dominant-baseline="middle">4,0</text>
+<polygon points="140.0,267.2 200.0,267.2 200.0,327.2 140.0,327.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="170.0" y="297.2" text-anchor="middle" dominant-baseline="middle">4,1</text>
+<polygon points="200.0,260.0 260.0,260.0 260.0,320.0 200.0,320.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="230.0" y="290.0" text-anchor="middle" dominant-baseline="middle">4,2</text>
+<polygon points="260.0,267.2 320.0,267.2 320.0,327.2 260.0,327.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="290.0" y="297.2" text-anchor="middle" dominant-baseline="middle">4,3</text>
+<polygon points="346.0,282.2 397.9,312.2 367.9,364.2 316.0,334.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="357.0" y="323.2" text-anchor="middle" dominant-baseline="middle">4,4</text>
+<polygon points="425.9,293.7 477.9,323.7 447.9,375.7 395.9,345.7" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="436.9" y="334.7" text-anchor="middle" dominant-baseline="middle">4,5</text>
+<polygon points="485.0,87.2 545.0,87.2 545.0,147.2 485.0,147.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="515.0" y="117.2" text-anchor="middle" dominant-baseline="middle">4,7</text>
+<polygon points="552.1,323.7 604.1,293.7 634.1,345.7 582.1,375.7" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="593.1" y="334.7" text-anchor="middle" dominant-baseline="middle">4,8</text>
+<polygon points="632.1,312.2 684.0,282.2 714.0,334.2 662.1,364.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="673.0" y="323.2" text-anchor="middle" dominant-baseline="middle">4,9</text>
+<polygon points="710.0,267.2 770.0,267.2 770.0,327.2 710.0,327.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="740.0" y="297.2" text-anchor="middle" dominant-baseline="middle">4,10</text>
+<polygon points="770.0,260.0 830.0,260.0 830.0,320.0 770.0,320.0" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="800.0" y="290.0" text-anchor="middle" dominant-baseline="middle">4,11</text>
+<polygon points="830.0,267.2 890.0,267.2 890.0,327.2 830.0,327.2" fill="#ddd" fill-opacity="0.8" stroke="#333"/>
+<text x="860.0" y="297.2" text-anchor="middle" dominant-baseline="middle">4,12</text>
+</svg>

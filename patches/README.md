@@ -29,6 +29,8 @@ for these changes, marked `PATCHED`:
 - `src/keyboard.rs`: `rmk::keyboard::caps_word_active()`, for the Caps Word indicator on the dongle's screen. Caps
   Word's state is private to `Keyboard` and no event carries it, so `CapsWordState` stores when it times out in a
   static that the function reads.
+- `src/split/ble/central.rs`: the "Connection ... lost" log line names the peripheral id, so the dongle's USB log
+  shows which half dropped and why.
 
 RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
 ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
