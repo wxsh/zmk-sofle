@@ -1,8 +1,9 @@
 #[cfg(feature = "subrating")]
 use bt_hci::cmd::le::LeSubrateRequest;
 use bt_hci::cmd::le::{LeReadLocalSupportedFeatures, LeSetPhy, LeSetScanParams};
+use bt_hci::cmd::status::ReadRssi;
 use bt_hci::controller::{ControllerCmdAsync, ControllerCmdSync};
-use embassy_futures::select::{Either, Either3, select, select3};
+use embassy_futures::select::{Either, Either4, select, select4};
 use embassy_sync::blocking_mutex::raw::NoopRawMutex;
 use embassy_sync::channel::Channel;
 use embassy_sync::signal::Signal;
@@ -201,11 +202,13 @@ pub(crate) async fn run_peripheral_session<
     #[cfg(not(feature = "subrating"))] C: Controller
         + ControllerCmdSync<LeSetScanParams>
         + ControllerCmdAsync<LeSetPhy>
-        + ControllerCmdSync<LeReadLocalSupportedFeatures>,
+        + ControllerCmdSync<LeReadLocalSupportedFeatures>
+        + ControllerCmdSync<ReadRssi>,
     #[cfg(feature = "subrating")] C: Controller
         + ControllerCmdSync<LeSetScanParams>
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
+        + ControllerCmdSync<ReadRssi>
         + ControllerCmdAsync<LeSubrateRequest>,
 >(
     id: usize,
@@ -386,10 +389,14 @@ pub(crate) mod subrating {
 async fn run_central_manager_task<
     'b,
     's: 'b,
-    #[cfg(not(feature = "subrating"))] C: Controller + ControllerCmdAsync<LeSetPhy> + ControllerCmdSync<LeReadLocalSupportedFeatures>,
+    #[cfg(not(feature = "subrating"))] C: Controller
+        + ControllerCmdAsync<LeSetPhy>
+        + ControllerCmdSync<LeReadLocalSupportedFeatures>
+        + ControllerCmdSync<ReadRssi>,
     #[cfg(feature = "subrating")] C: Controller
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
+        + ControllerCmdSync<ReadRssi>
         + ControllerCmdAsync<LeSubrateRequest>,
     P: PacketPool,
 >(
@@ -409,13 +416,30 @@ async fn run_central_manager_task<
     info!("Updating connection parameters for peripheral");
     update_conn_params(stack, conn, &default_split_conn_params()).await;
 
-    let (Either3::First(e) | Either3::Second(e) | Either3::Third(e)) = select3(
+    let (Either4::First(e) | Either4::Second(e) | Either4::Third(e) | Either4::Fourth(e)) = select4(
         ble_central_task(id, &client, conn),
         discover_and_run_manager(id, &client, matrix_config),
         update_conn_params_on_sleep_change(stack, conn),
+        log_rssi(id, stack, conn),
     )
     .await;
     e
+}
+
+/// PATCHED (Eyelash Sofle, see patches/README.md): log the link's RSSI every 2s, to compare how well the
+/// dongle hears each half. Runs until the link ends (it never returns on its own).
+async fn log_rssi<C: Controller + ControllerCmdSync<ReadRssi>, P: PacketPool>(
+    id: usize,
+    stack: &Stack<'_, C, P>,
+    conn: &Connection<'_, P>,
+) -> Result<(), BleHostError<C::Error>> {
+    loop {
+        Timer::after_secs(2).await;
+        match conn.rssi(stack).await {
+            Ok(rssi) => info!("[rssi] peripheral {}: {} dBm", id, rssi),
+            Err(_) => warn!("[rssi] peripheral {}: read failed", id),
+        }
+    }
 }
 
 async fn ble_central_task<'a, C: Controller + ControllerCmdAsync<LeSetPhy>, P: PacketPool>(

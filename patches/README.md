@@ -31,6 +31,9 @@ for these changes, marked `PATCHED`:
   static that the function reads.
 - `src/split/ble/central.rs`: the "Connection ... lost" log line names the peripheral id, so the dongle's USB log
   shows which half dropped and why.
+- `src/split/ble/central.rs` (+ a `ReadRssi` bound in `src/ble/mod.rs`): logs each split link's RSSI every 2s
+  (`[rssi] peripheral <id>: <n> dBm`), to compare how well the dongle hears each half. Diagnostic; drop it once
+  the left link is sorted.
 - `src/split/ble/central.rs`: the split links use 1M PHY, not 2M. On 2M the left half's link lost packets unless
   the dongle was a few cm away (late keys, key repeats, supervision timeouts). The halves never request a PHY
   themselves, so only the dongle needs this.

@@ -158,11 +158,14 @@ impl<
     #[cfg(not(feature = "subrating"))] C: Controller
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
-        + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>,
+        + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>
+        // PATCHED (Eyelash Sofle): the split links' RSSI log, see split::ble::central
+        + ControllerCmdSync<bt_hci::cmd::status::ReadRssi>,
     #[cfg(feature = "subrating")] C: Controller
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
         + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>
+        + ControllerCmdSync<bt_hci::cmd::status::ReadRssi>
         + ControllerCmdAsync<LeSubrateRequest>,
 > Runnable for BleTransport<'a, C>
 {
