@@ -36,6 +36,8 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 ## Dongle screen (`dongle/src/screen.rs`)
 
 - 240x280 ST7789V from the ZMK `dongle_screen` shield, used in landscape. Pins are in the module doc.
+- The screen runs on SPIM2 at 8MHz, not SPIM3: nRF52840 errata 198 (SPIM3 TX corrupted when its RAM
+  block is shared with the CPU/radio) once drew the modifiers row over the output row. Don't move it back.
 - `ScreenRenderer` redraws only the parts that changed. `ScreenController` runs the backlight PWM and
   records the active transport, which RMK's `RenderContext` doesn't carry.
 - RMK sizes event subscriber slots at build time. Any new `XEvent::subscriber()` in our code needs

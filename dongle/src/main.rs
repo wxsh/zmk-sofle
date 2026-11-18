@@ -17,7 +17,7 @@ use embassy_executor::Spawner;
 use embassy_nrf::gpio::{Level, Output, OutputDrive};
 use embassy_nrf::interrupt::{self, InterruptExt};
 use embassy_nrf::mode::Async;
-use embassy_nrf::peripherals::{RNG, SPI3, USBD};
+use embassy_nrf::peripherals::{RNG, SPI2, USBD};
 use embassy_nrf::pwm::{SimpleConfig, SimplePwm};
 use embassy_nrf::spim::{self, Spim};
 use embassy_nrf::usb::Driver;
@@ -45,7 +45,7 @@ use vial::{VIAL_KEYBOARD_DEF, VIAL_KEYBOARD_ID};
 
 bind_interrupts!(struct Irqs {
     USBD => usb::InterruptHandler<USBD>;
-    SPIM3 => spim::InterruptHandler<SPI3>;
+    SPI2 => spim::InterruptHandler<SPI2>;
     RNG => rng::InterruptHandler<RNG>;
     EGU0_SWI0 => nrf_sdc::mpsl::LowPrioInterruptHandler;
     CLOCK_POWER => nrf_sdc::mpsl::ClockInterruptHandler, usb::vbus_detect::InterruptHandler;
@@ -230,12 +230,14 @@ async fn main(spawner: Spawner) {
     )
     .with_host_service(&host_service);
 
-    // Screen: wiring and layout are in screen.rs. 16MHz as in ZMK: the shield asks for 31MHz, which
-    // Zephyr rounds down to 16MHz. The panel stayed black at 32MHz.
+    // Screen: wiring and layout are in screen.rs. On SPIM2, not SPIM3 (which ZMK uses at 16MHz):
+    // nRF52840 errata 198, SPIM3 can send corrupted bytes when the CPU or another EasyDMA user (the
+    // radio) touches the same RAM block as its TX buffer. A corrupted window command drew the
+    // modifiers row over the output row. SPIM0-2 top out at 8MHz. The panel stayed black at 32MHz.
     let mut spi_config = spim::Config::default();
-    spi_config.frequency = spim::Frequency::M16;
+    spi_config.frequency = spim::Frequency::M8;
     // Below the priorities the BLE stack reserves
-    interrupt::SPIM3.set_priority(interrupt::Priority::P3);
+    interrupt::SPI2.set_priority(interrupt::Priority::P3);
     // 4-bit palette framebuffer (33K): a full RGB565 one (131K) left too little RAM for the stack.
     // Const-initialized so that they never pass through the stack.
     static PIXELS: ConstStaticCell<[u8; screen::WIDTH * screen::HEIGHT / 2]> =
@@ -244,7 +246,7 @@ async fn main(spawner: Spawner) {
         ConstStaticCell::new([0; screen::WIDTH * 2 * palette_display::STAGING_ROWS]);
     // The panel is reset and set up by `DisplayProcessor`, before it first draws
     let lcd_display = PaletteDisplay::<{ screen::WIDTH }, { screen::HEIGHT }>::new(
-        Spim::new_txonly(p.SPI3, Irqs, p.P1_13, p.P1_15, spi_config),
+        Spim::new_txonly(p.SPI2, Irqs, p.P1_13, p.P1_15, spi_config),
         Output::new(p.P1_14, Level::High, OutputDrive::Standard),
         Output::new(p.P1_12, Level::Low, OutputDrive::Standard),
         Output::new(p.P0_29, Level::High, OutputDrive::Standard),

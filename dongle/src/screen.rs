@@ -1,8 +1,9 @@
 //! The dongle's screen: the 1.69" 240x280 ST7789V LCD of the ZMK `dongle_screen` shield
 //! (janpfischer/zmk-dongle-screen 0.1.0), used in landscape as there.
 //!
-//! Wiring on the XIAO BLE, from the shield's `seeeduino_xiao_ble.overlay`: SPI3 SCK P1.13 (D8),
+//! Wiring on the XIAO BLE, from the shield's `seeeduino_xiao_ble.overlay`: SPI SCK P1.13 (D8),
 //! MOSI P1.15 (D10), CS P1.14 (D9), DC P1.12 (D7), RST P0.29 (D3), backlight PWM P1.11 (D6).
+//! The shield uses SPI3, but we drive it with SPIM2 (nRF52840 errata 198, see `main.rs`).
 //!
 //! [`ScreenRenderer`] draws the output, layer, Caps Lock and Caps Word, modifiers and both halves'
 //! batteries.

@@ -31,6 +31,7 @@ ZMK reference: `boards/arm/eyelash_sofle/eyelash_sofle.dtsi` (`led_strip`), `con
   dips of ~25mV make the dongle's display jump between values (e.g. 73% and 77%).
 - Fix: average several readings on the halves (or the dongle) before reporting, and/or only report changes
   larger than a few percent. Cosmetic: the swing is far above brown-out voltage.
+- Plan: [battery-smoothing.md](battery-smoothing.md) (smooth the raw ADC readings on the halves).
 
 ## Keymap behaviour
 
