@@ -31,20 +31,14 @@ for these changes, marked `PATCHED`:
   static that the function reads.
 - `src/split/ble/central.rs`: the "Connection ... lost" log line names the peripheral id, so the dongle's USB log
   shows which half dropped and why.
-- `src/split/ble/central.rs` (+ a `ReadRssi` bound in `src/ble/mod.rs`): logs each split link's RSSI every 2s
-  (`[rssi] peripheral <id>: <n> dBm`), to compare how well the dongle hears each half. Diagnostic; drop it once
-  the left link is sorted.
-- `src/split/ble/central.rs`: the split links use 1M PHY, not 2M. On 2M the left half's link lost packets unless
-  the dongle was a few cm away (late keys, key repeats, supervision timeouts). The halves never request a PHY
-  themselves, so only the dongle needs this.
 - `src/ble/mod.rs`: when BLE host advertising times out (300s with no BLE host), the dongle only goes to sleep if
   USB isn't the active transport. Upstream it always slept, which switched the split links to sleep parameters
-  every ~5 minutes while typing over USB; a supervision timeout on the left half followed the switch back.
+  and back every ~5 minutes while typing over USB.
 
 RMK supports a single tri-layer, used by WIN (SYMBOL + NAV -> ADJUST). MAC needs its own (SYM_MAC + NAV_MAC ->
 ADJUST). The workaround without a patch, `ltp!(6, …)` on the other thumb in SYM_MAC and NAV_MAC, fails when both
 thumbs go down within the tapping term: RMK looks up the second key's action before it resolves the first key as a
 hold, so the second thumb gets MAC's `ltp!(5, …)` and ADJUST never turns on.
 
-When upgrading RMK, unpack the new `rmk` version here and reapply the changes (or drop them once upstream supports
-several tri-layers and exposes Caps Word's state).
+When upgrading RMK, unpack the new `rmk` version here and reapply the changes (or drop each one once upstream
+covers it: several tri-layers, Caps Word's state, the peripheral id in the log, no sleep while on USB).

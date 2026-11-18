@@ -7,10 +7,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 rmk = { version = "0.9.0", default-features = false, features = [
-    # TEMPORARY, to debug the left link dropping: RMK's logs go to a USB serial port
-    # (`cat /dev/cu.usbmodem*` on macOS) while the half is plugged in. Can't be combined with RMK's
-    # `defmt` feature: swap back to "defmt" (and drop the USB code in main.rs and `log` below) when done.
-    "usb_log",
+    "defmt",
     "storage",
     "split",
     "async_matrix",
@@ -32,9 +29,6 @@ nrf-mpsl = { version = "0.4.0", features = [
     "nrf52840",
 ] }
 bt-hci = { version = "0.10", features = ["defmt"] }
-# TEMPORARY (with `usb_log` above): info level, so connects, disconnects and advertising show without a
-# line per key press
-log = { version = "0.4", features = ["max_level_info", "release_max_level_info"] }
 
 cortex-m = "0.7.7"
 cortex-m-rt = "0.7.5"

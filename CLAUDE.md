@@ -24,12 +24,14 @@ Three independent crates (not a Cargo workspace, so each one gets only its own `
 - The dongle shortens the SDC's connection event length (2.5ms) and central ACL event spacing (3.75ms)
   in `set_sdc_event_timing()`. At the 7.5ms defaults the two 7.5ms split links collided every event,
   and one half kept dropping (`0x3E` on connect, `0x08` supervision timeout after).
-- The split links run on 1M PHY (patched `rmk`, `run_central_manager_task`), not RMK's 2M: on 2M the left
-  half's link lost packets (late keys, repeats) unless the dongle was within a few cm. ZMK was fine on the
-  same hardware.
+- Late keys, key repeats and drops on one half were a faulty dongle (first XIAO): it heard both halves at
+  -75 to -92 dBm even from 5cm, and a phone heard it 25dB weaker than the halves. A good XIAO reads -37 to
+  -45 dBm. To check a dongle, log RSSI with `conn.rssi(stack)` in `run_central_manager_task` (needs a
+  `ControllerCmdSync<ReadRssi>` bound up to `BleTransport`), or compare it with the halves in nRF Connect.
 - A host that once paired with a half (the left was the BLE keyboard in the first RMK version, same address)
   keeps reconnecting to its split advertising and steals it from the dongle (`Long term key request ... no
-  long term key` in the half's log). Fix: forget the old "Eyelash Sofle" pairing on the host.
+  long term key` in the half's log). Fix: forget the old "Eyelash Sofle" pairing on the host. The halves'
+  `ble_addr()` also XORs the low bytes so their addresses no longer match that old one; keep left and right alike.
 
 ## Dongle screen (`dongle/src/screen.rs`)
 

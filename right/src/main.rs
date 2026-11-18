@@ -78,11 +78,16 @@ fn init_adc(adc: Peri<'static, SAADC>) -> Saadc<'static, 1> {
     saadc::Saadc::new(adc, Irqs, config, [channel_cfg])
 }
 
+/// Random static address from the chip's device id.
+///
+/// The low bytes are flipped so that the address differs from the one the left half had as a BLE keyboard in
+/// the first RMK version: a host that paired with it then kept connecting to its split advertising and took it
+/// away from the dongle. The right half does the same so both derive their address the same way.
 fn ble_addr() -> [u8; 6] {
     let ficr = embassy_nrf::pac::FICR;
     let high = u64::from(ficr.deviceid(1).read());
     let addr = high << 32 | u64::from(ficr.deviceid(0).read());
-    let addr = addr | 0x0000_c000_0000_0000;
+    let addr = (addr ^ 0x0000_0000_0000_5a5a) | 0x0000_c000_0000_0000;
     unwrap!(addr.to_le_bytes()[..6].try_into())
 }
 

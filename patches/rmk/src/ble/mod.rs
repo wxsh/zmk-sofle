@@ -158,14 +158,11 @@ impl<
     #[cfg(not(feature = "subrating"))] C: Controller
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
-        + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>
-        // PATCHED (Eyelash Sofle): the split links' RSSI log, see split::ble::central
-        + ControllerCmdSync<bt_hci::cmd::status::ReadRssi>,
+        + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>,
     #[cfg(feature = "subrating")] C: Controller
         + ControllerCmdAsync<LeSetPhy>
         + ControllerCmdSync<LeReadLocalSupportedFeatures>
         + ControllerCmdSync<bt_hci::cmd::le::LeSetScanParams>
-        + ControllerCmdSync<bt_hci::cmd::status::ReadRssi>
         + ControllerCmdAsync<LeSubrateRequest>,
 > Runnable for BleTransport<'a, C>
 {
@@ -349,9 +346,8 @@ async fn run_ble_keyboard<
                     set_ble_state(BleState::Inactive);
 
                     // PATCHED (Eyelash Sofle, see patches/README.md): no BLE host found says nothing
-                    // about USB. Sleeping here put the dongle's split links on sleep parameters every 5
-                    // minutes while typing over USB, and the switch back to awake parameters was
-                    // followed by a supervision timeout on the left half.
+                    // about USB. Sleeping here switched the dongle's split links to sleep parameters and
+                    // back every 5 minutes while typing over USB.
                     if crate::state::active_transport() != Some(ConnectionType::Usb) {
                         request_sleep();
                     }
