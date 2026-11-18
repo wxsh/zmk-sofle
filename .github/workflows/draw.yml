@@ -1,0 +1,40 @@
+name: Draw keymap
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - dongle/src/keymap.rs
+      - scripts/gen_keymap_drawer.py
+      - scripts/layout.py
+      - keymap-drawer/config.yaml
+      - .github/workflows/draw.yml
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install keymap-drawer
+        run: pip install keymap-drawer
+
+      - name: Draw keymap
+        run: |
+          python3 scripts/gen_keymap_drawer.py
+          keymap -c keymap-drawer/config.yaml draw keymap-drawer/eyelash_sofle.yaml -o keymap-drawer/eyelash_sofle.svg
+
+      # build.yml ignores keymap-drawer/**, so this commit doesn't trigger a firmware build
+      - name: Commit drawing
+        run: |
+          git add keymap-drawer/eyelash_sofle.yaml keymap-drawer/eyelash_sofle.json keymap-drawer/eyelash_sofle.svg
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "[Draw] ${{ github.event.head_commit.message || 'Redraw keymap' }}"
+          git push

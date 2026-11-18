@@ -1,0 +1,33 @@
+# keymap-drawer settings for eyelash_sofle.svg (see scripts/gen_keymap_drawer.py)
+draw_config:
+  n_columns: 1
+  draw_key_sides: true
+  key_w: 60.0
+  key_h: 56.0
+  split_gap: 30.0
+  key_rx: 6.0
+  key_ry: 6.0
+  inner_pad_w: 2.0
+  inner_pad_h: 2.0
+  outer_pad_w: 40.0
+  outer_pad_h: 56.0
+  line_spacing: 1.2
+  arc_radius: 6.0
+  append_colon_to_layer_header: true
+  small_pad: 2.0
+  shrink_wide_legends: 6
+  glyph_tap_size: 18
+  glyph_hold_size: 15
+  glyph_shifted_size: 15
+  svg_extra_style: |
+    svg.keymap {
+      font-family: Ubuntu Mono, Inconsolata, Consolas, Liberation Mono, Menlo, monospace;
+      font-size: 12px;
+      font-weight: bold;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* Color accent for held keys */
+    rect.held, rect.combo.held {
+      fill: #ffc;
+    }

@@ -15,18 +15,15 @@ is by impact. "ZMK reference" points at files on the `Dongle` branch.
 ZMK reference: `config/eyelash_sofle.conf` (`CONFIG_DONGLE_SCREEN_*`), and the shield in
 `janpfischer/zmk-dongle-screen` 0.1.0 (`boards/shields/dongle_screen/`).
 
-### RGB underglow
+### RGB underglow (won't port)
 - 7 WS2812 LEDs, data on P1.12 through SPI3 (GRB order), powered through EXT_POWER (P0.13).
-- ZMK settings: off at start, hue 160, effect 3, max brightness 90, auto-off on idle and on USB.
-- RMK 0.9 has no WS2812/underglow support. It would need a custom driver (SPI-encoded WS2812) and a
-  processor reacting to light keycodes. P0.13 is currently held low.
+- It was never in use, so P0.13 (EXT_POWER) stays held low on purpose, which keeps the LEDs unpowered.
 
 ZMK reference: `boards/arm/eyelash_sofle/eyelash_sofle.dtsi` (`led_strip`), `config/eyelash_sofle.conf`.
 
-### Backlight
+### Backlight (won't port)
 - PWM backlight on P1.13 (PWM0, 1ms period). ZMK turned it on at boot at 100% and never idled it off.
-- RMK 0.9 has the `light!(Backlight*)` keycodes but no PWM backlight driver. Needs a custom
-  processor. P1.13 is currently held low.
+- It was never in use, so P1.13 stays held low on purpose (also saves battery on the halves).
 
 ### Battery level smoothing
 - The halves report battery from a single VDDH reading every 30s with no averaging, mapped linearly from
@@ -62,11 +59,6 @@ ZMK's settings:
 The RMK values in `dongle/src/main.rs` are approximations and need tuning on hardware.
 
 ## Tooling
-
-### Keymap drawing
-- The `draw.yml` workflow (keymap-drawer) parsed the ZMK keymap and was removed.
-- `keymap-drawer/*.svg` are now static snapshots of the ZMK keymap.
-- Needs a generator from `keymap.rs` (or Vial JSON) to keymap-drawer YAML.
 
 ### Settings reset firmware
 ZMK built `settings_reset` UF2s for each board to clear bonds/settings. The RMK port has no
