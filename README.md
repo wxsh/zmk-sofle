@@ -49,8 +49,8 @@ the `//zmk` board variant, see the
   that off.
 - The dongle screen shows output, layer, modifiers and both batteries; its brightness is fixed at 80%
   (off after 5 minutes idle). No RGB underglow or backlight on the halves (both are switched off).
-- MAC tri-layer: RMK has a single tri-layer (used for WIN). On SYM_MAC/NAV_MAC
-  the other thumb key is a layer-tap to ADJUST instead.
+- MAC tri-layer: RMK has a single tri-layer (used for WIN). A second one for SYM_MAC/NAV_MAC comes
+  from a patch to `rmk` (see `patches/README.md`).
 - `BT_CLR_ALL` is replaced by `CLR_PEER`; hold a `BT0`–`BT4` key for 5s to clear that profile.
 - No `&soft_off` equivalent.
 - Keymap editing uses [Vial](https://get.vial.today/) instead of ZMK Studio. Unlock: hold Esc + the top-right key.
